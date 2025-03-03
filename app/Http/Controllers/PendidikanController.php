@@ -20,6 +20,30 @@ class PendidikanController extends Controller
         return view('admin.pelamar.detail', compact('pendidikans'));
     }
 
+    // public function getPendidikan(Request $request)
+    // {
+    //     try {
+    //         $pendidikan = $request->query('pendidikan');
+    //         $wherePendidikan = [];
+    //         if ((int) $pendidikan > 0)
+    //             $wherePendidikan['id'] = $pendidikan;
+
+    //         $pendidikans = Pendidikan::where($wherePendidikan)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get();
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $pendidikans
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to retrieve data: ' . $e->getMessage()
+    //         ]);
+    //     }
+    // }
+
     /**
      * Show the form for creating a new resource.
      */

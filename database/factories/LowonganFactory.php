@@ -25,8 +25,8 @@ class LowonganFactory extends Factory
     public function definition(): array
     {
         return [
-            'posisi_id' => Posisi::inRandomOrder()->first()->id ?? Posisi::factory()->create()->id, // Pastikan posisi tersedia
             'departemen_id' => Departemen::inRandomOrder()->first()->id ?? Departemen::factory()->create()->id, // Pastikan departemen tersedia
+            'posisi_id' => Posisi::inRandomOrder()->first()->id ?? Posisi::factory()->create()->id, // Pastikan posisi tersedia
             'lokasi' => $this->faker->city, // Menghasilkan nama kota
             'tgl_buka' => $this->faker->date(),
             'tgl_tutup' => $this->faker->dateTimeBetween('now', '+1 month')->format('Y-m-d'), // Pastikan setelah tgl_buka

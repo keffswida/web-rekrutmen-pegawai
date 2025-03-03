@@ -27,11 +27,6 @@ return new class extends Migration
             $table->string('no_telp');
             $table->string('email');
             $table->string('password');
-            // $table->string('pendidikan');
-            // $table->string('pengalaman');
-            // $table->string('keterampilan');
-            // $table->string('sertifikat');
-            // $table->string('sertifikat_image')->nullable();
             $table->string('profile');
             $table->string('cv');
             $table->timestamps();

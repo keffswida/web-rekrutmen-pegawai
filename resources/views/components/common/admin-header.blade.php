@@ -172,9 +172,10 @@
             <!-- ./ Dashboard -->
 
             <!-- Lowongan -->
-            <li class="menu nav-item relative" x-data="{ isOpen: false }">
-                <a href="javascript:;" class="nav-link" @mouseenter="isOpen = true" @mouseleave="isOpen = false">
+            <li class="menu nav-item relative">
+                <a href="/lowongan" class="nav-link group">
                     <div class="flex items-center">
+
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -184,35 +185,17 @@
                                 d="M10.5814 2.25L10.561 2.25C10.4474 2.24998 10.3591 2.24997 10.2755 2.25503C9.21507 2.31926 8.28647 2.98855 7.89021 3.97426C7.8588 4.05239 7.80711 4.20756 7.77024 4.31825L7.76636 4.32989C7.66326 4.60981 7.47709 4.85224 7.26157 5.02534C7.03409 5.0327 6.81683 5.0422 6.60915 5.05445C4.96519 5.15144 3.92193 5.42122 3.17157 6.17158C2.92691 6.41624 2.73334 6.69204 2.5802 7.00965C2.63777 7.0293 2.69387 7.05632 2.74721 7.09099C4.8475 8.45617 6.16709 9.31008 7.26356 9.85786C7.33001 9.51166 7.6345 9.25009 8.00009 9.25009C8.4143 9.25009 8.75009 9.58588 8.75009 10.0001V10.458C10.8695 11.0976 13.1306 11.0976 15.2501 10.458V10.0001C15.2501 9.58588 15.5859 9.25009 16.0001 9.25009C16.3657 9.25009 16.6702 9.5117 16.7366 9.85794C17.8331 9.31015 19.1527 8.45623 21.2531 7.09099C21.3064 7.05638 21.3624 7.02939 21.4199 7.00975C21.2667 6.6921 21.0731 6.41626 20.8284 6.17158C20.0781 5.42122 19.0348 5.15144 17.3909 5.05445C17.1937 5.04282 16.9879 5.03367 16.773 5.02648C16.7594 5.01545 16.7458 5.00406 16.7322 4.99231C16.4915 4.78435 16.3033 4.51011 16.2084 4.25288L16.2053 4.24344C16.1694 4.13576 16.1415 4.05195 16.1102 3.97426C15.714 2.98855 14.7854 2.31926 13.725 2.25503C13.6414 2.24997 13.553 2.24998 13.4395 2.25L10.5814 2.25ZM14.8176 4.81569L14.8131 4.80495L14.8082 4.79286L14.8037 4.78091L14.8 4.77097L14.7982 4.76596L14.794 4.75373L14.7902 4.74244L14.7881 4.73617L14.7853 4.72783L14.7831 4.72079L14.7813 4.7151C14.742 4.59708 14.7299 4.56204 14.7185 4.53375C14.5384 4.08571 14.1163 3.78148 13.6343 3.75229C13.602 3.75034 13.5625 3.75 13.4191 3.75H10.5814C10.438 3.75 10.3984 3.75034 10.3662 3.75229C9.88424 3.78148 9.46221 4.08561 9.28204 4.53354L9.2794 4.54052L9.27143 4.56245C9.2648 4.58104 9.25672 4.60429 9.2474 4.63156C9.23088 4.67994 9.21232 4.73546 9.19351 4.79186L9.19168 4.79777L9.18945 4.80481L9.18671 4.81314L9.18462 4.81941L9.18079 4.83071L9.17655 4.84295L9.17477 4.84796L9.17113 4.85791L9.16655 4.86987L9.16168 4.88199L9.15751 4.8919L9.15686 4.89336C9.14293 4.92921 9.12818 4.96498 9.11263 5.00064C9.39625 5 9.69183 5 10 5H14C14.3115 5 14.6101 5 14.8965 5.00066C14.868 4.93956 14.8417 4.87784 14.8176 4.81569Z"
                                 fill="currentColor" />
                         </svg>
-                        <span class="px-1">Lowongan</span>
-                    </div>
-                    <div class="right_arrow" :class="{ 'rotate-90': isOpen }">
-                        <svg class="w-4 h-4 transition-transform duration-300" width="16" height="16"
-                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
+
+                        <span
+                            class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Lowongan</span>
                     </div>
                 </a>
-                <ul class="sub-menu" x-show="isOpen" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 transform -translate-y-2"
-                    x-transition:enter-end="opacity-100 transform translate-y-0"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 transform translate-y-0"
-                    x-transition:leave-end="opacity-0 transform -translate-y-2" @mouseenter="isOpen = true"
-                    @mouseleave="isOpen = false">
-                    <li>
-                        <a href="/lowongan">List Lowongan</a>
-                    </li>
-                    <li>
-                        <a href="/lowongan/create">Tambah Lowongan</a>
-                    </li>
-                </ul>
             </li>
+            <!-- ./ Lowongan -->
 
             <!-- Pelamar -->
-            <li class="menu nav-item relative" x-data="{ isOpen: false }">
-                <a href="javascript:;" class="nav-link" @mouseenter="isOpen = true" @mouseleave="isOpen = false">
+            <li class="menu nav-item relative">
+                <a href="/pelamar" class="nav-link group">
                     <div class="flex items-center">
 
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -236,30 +219,11 @@
                                 d="M18.5526 18.986C20.4826 18.8538 21.9999 17.8044 21.9999 16.5294C21.9999 15.2662 20.5088 14.2245 18.6041 14.0767C19.1433 14.744 19.4999 15.5558 19.4999 16.5C19.4999 17.474 19.1205 18.3071 18.5526 18.986Z"
                                 fill="currentColor" />
                         </svg>
-                        <span class="px-1">Pelamar</span>
-                    </div>
-                    <div class="right_arrow" :class="{ 'rotate-90': isOpen }">
-                        <svg class="w-4 h-4 transition-transform duration-300" width="16" height="16"
-                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
+
+                        <span
+                            class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Pelamar</span>
                     </div>
                 </a>
-                <ul class="sub-menu" x-show="isOpen" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 transform -translate-y-2"
-                    x-transition:enter-end="opacity-100 transform translate-y-0"
-                    x-transition:leave="transition ease-in duration-200"
-                    x-transition:leave-start="opacity-100 transform translate-y-0"
-                    x-transition:leave-end="opacity-0 transform -translate-y-2" @mouseenter="isOpen = true"
-                    @mouseleave="isOpen = false">
-                    <li>
-                        <a href="/pelamar">List Pelamar</a>
-                    </li>
-                    <li>
-                        <a href="/pelamar/create">Buat Pelamar</a>
-                    </li>
-                </ul>
             </li>
             <!-- ./ Pelamar -->
 
@@ -311,7 +275,7 @@
 
             <!-- Laporan -->
             <li class="menu nav-item relative">
-                <a href="#" class="nav-link group">
+                <a href="/reports" class="nav-link group">
                     <div class="flex items-center">
 
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"

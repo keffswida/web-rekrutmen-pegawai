@@ -51,7 +51,7 @@ class RegisterController extends Controller
                 'agama' => $data['agama'],
                 'tempat_lahir' => $data['tempat_lahir'],
                 'tgl_lahir' => $data['tgl_lahir'],
-                'status' => $data['status'],
+                'status_kawin' => $data['status_kawin'],
                 'email' => $data['email'],
                 'password' => Hash::make($data['password']),
                 'no_telp' => $data['no_telp'],

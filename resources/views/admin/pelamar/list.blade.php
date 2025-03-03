@@ -4,11 +4,11 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <div x-data="listPelamar">
+    <div>
         <div class="panel mt-6">
             <div class="flex items-center justify-between mb-4">
                 <h5 class="font-semibold text-lg dark:text-white-light">List Pelamar</h5>
-                {{-- 
+                {{--
                 <a href="{{ route('pelamar.create') }}" class="btn btn-warning gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -19,6 +19,29 @@
                     Tambah Data
                 </a> --}}
             </div>
+            {{-- <div class="flex"> --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                    <select name="lowongan" id="filter-lowongan" class="form-select">
+                        <option value="0">Semua</option>
+                        @foreach ($pelamar as $p)
+                            <option value="{{ $p->lowongan_id }}">{{ $p->lowongan->posisi->nama_posisi }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <select name="gelar" id="filter-gelar" class="form-select">
+                        <option value="-1">Semua</option>
+                        <option value="0">SMA</option>
+                        <option value="1">SMK</option>
+                        <option value="2">D3</option>
+                        <option value="3">D4</option>
+                        <option value="4">S1</option>
+                        <option value="5">S2</option>
+                    </select>
+                </div>
+            </div>
+            {{-- </div> --}}
             <table id="list_pelamar" class="whitespace-nowrap table-hover">
                 <thead>
                     <tr>
@@ -27,17 +50,18 @@
                         <th>Lowongan</th>
                         <th>Nama Lengkap</th>
                         <th>Nama Panggilan</th>
+                        <th>Gelar</th>
                         <th>No. Telepon</th>
                         <th>Email</th>
                         <th>Alamat</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                </tbody>
             </table>
         </div>
 
     </div>
-
 
     <!-- Add Row and Delete Row Script -->
     <script>
@@ -70,40 +94,41 @@
     <!-- ./ Add Row and Delete Row Script -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('{{ route('pelamar.data') }}')
+        let dataTable;
+
+        function setDatatable() {
+            const lowongan = $('#filter-lowongan').val();
+            const gelar = $('#filter-gelar').val();
+
+            fetch(`{{ route('pelamar.data') }}?lowongan=${lowongan}&gelar=${gelar}`)
                 .then(response => response.json())
                 .then(responseData => {
                     console.log(responseData);
 
-                    const table = document.querySelector("#list_pelamar");
-                    const firstRow = document.querySelector("#list_pelamar");
-                    const dataTable = new simpleDatatables.DataTable(table, {
+                    dataTable = new simpleDatatables.DataTable("#list_pelamar", {
                         data: {
-                            headings: ['No', 'Aksi', 'Lowongan', 'Nama Lengkap', 'Nama Panggilan',
+                            headings: ['No', 'Aksi', 'Lowongan', 'Nama Lengkap', 'Nama Panggilan', 'Gelar',
                                 'No. Telp', 'Email', 'Alamat'
                             ],
                             data: responseData.data.map((item, index) => [
                                 index + 1,
                                 `<div class="flex items-center">
-                                    <div>
-                                        <button type="button" @click="toggle" class="flex items-center justify-center w-8 h-8 hover:text-warning">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
-                                                <path opacity="0.5"
-                                                    d="M22 10.5V12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2H13.5"
-                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                                                </path>
-                                                <path
-                                                    d="M17.3009 2.80624L16.652 3.45506L10.6872 9.41993C10.2832 9.82394 10.0812 10.0259 9.90743 10.2487C9.70249 10.5114 9.52679 10.7957 9.38344 11.0965C9.26191 11.3515 9.17157 11.6225 8.99089 12.1646L8.41242 13.9L8.03811 15.0229C7.9492 15.2897 8.01862 15.5837 8.21744 15.7826C8.41626 15.9814 8.71035 16.0508 8.97709 15.9619L10.1 15.5876L11.8354 15.0091C12.3775 14.8284 12.6485 14.7381 12.9035 14.6166C13.2043 14.4732 13.4886 14.2975 13.7513 14.0926C13.9741 13.9188 14.1761 13.7168 14.5801 13.3128L20.5449 7.34795L21.1938 6.69914C22.2687 5.62415 22.2687 3.88124 21.1938 2.80624C20.1188 1.73125 18.3759 1.73125 17.3009 2.80624Z"
-                                                    stroke="currentColor" stroke-width="1.5"></path>
-                                                <path opacity="0.5"
-                                                    d="M16.6522 3.45508C16.6522 3.45508 16.7333 4.83381 17.9499 6.05034C19.1664 7.26687 20.5451 7.34797 20.5451 7.34797M10.1002 15.5876L8.4126 13.9"
-                                                    stroke="currentColor" stroke-width="1.5"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <a href="#" class="flex items-center justify-center w-8 h-8 hover:text-primary">
+                                    <button type="button" class="flex items-center justify-center w-8 h-8 hover:text-warning editPelamar" data-id="${item.id}">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
+                                            <path opacity="0.5"
+                                                d="M22 10.5V12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2H13.5"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                                            </path>
+                                            <path
+                                                d="M17.3009 2.80624L16.652 3.45506L10.6872 9.41993C10.2832 9.82394 10.0812 10.0259 9.90743 10.2487C9.70249 10.5114 9.52679 10.7957 9.38344 11.0965C9.26191 11.3515 9.17157 11.6225 8.99089 12.1646L8.41242 13.9L8.03811 15.0229C7.9492 15.2897 8.01862 15.5837 8.21744 15.7826C8.41626 15.9814 8.71035 16.0508 8.97709 15.9619L10.1 15.5876L11.8354 15.0091C12.3775 14.8284 12.6485 14.7381 12.9035 14.6166C13.2043 14.4732 13.4886 14.2975 13.7513 14.0926C13.9741 13.9188 14.1761 13.7168 14.5801 13.3128L20.5449 7.34795L21.1938 6.69914C22.2687 5.62415 22.2687 3.88124 21.1938 2.80624C20.1188 1.73125 18.3759 1.73125 17.3009 2.80624Z"
+                                                stroke="currentColor" stroke-width="1.5"></path>
+                                            <path opacity="0.5"
+                                                d="M16.6522 3.45508C16.6522 3.45508 16.7333 4.83381 17.9499 6.05034C19.1664 7.26687 20.5451 7.34797 20.5451 7.34797M10.1002 15.5876L8.4126 13.9"
+                                                stroke="currentColor" stroke-width="1.5"></path>
+                                        </svg>
+                                    </button>
+                                    <a class="flex items-center justify-center w-8 h-8 hover:text-primary detailPelamar" data-id="${item.id}">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path opacity="0.5"
@@ -114,11 +139,10 @@
                                                 stroke="currentColor" stroke-width="1.5"></path>
                                         </svg>
                                     </a>
-                                    <form action="#" method="post"
-                                        class="flex items-center justify-center w-8 h-8 hover:text-danger">
+                                    <form class="flex items-center justify-center w-8 h-8 hover:text-danger deletePelamar" data-id="${item.id}" method="POST">
                                         @csrf
-                                        @method('delete')
-                                        <button type="submit" onclick="return confirm('Apakah anda yakin?')">
+                                        @method('DELETE')
+                                        <button type="submit">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                 class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -140,6 +164,7 @@
                                 item.lowongan,
                                 item.nama_lengkap,
                                 item.nama_panggilan,
+                                item.gelar,
                                 item.no_telp,
                                 item.email,
                                 item.alamat
@@ -158,8 +183,66 @@
                             bottom: "{info}{select}{pager}"
                         }
                     });
+                    $("#list_pelamar").on("click", "tbody button.editPelamar", function() {
+                        // console.log('tes');
+
+                        const id = $(this).data('id');
+                        // const data = dataTable.rows($(this).parents("tr")).data()
+
+                        // console.log(id);
+                        window.location = '/pelamar/' + id + '/edit';
+
+                    });
+                    $("#list_pelamar").on("click", "tbody a.detailPelamar", function() {
+                        const id = $(this).data('id');
+                        window.location = '/pelamar/' + id;
+
+                    });
+                    $(document).ready(function() {
+                        $(document).on("submit", ".deletePelamar", function(e) {
+                            e.preventDefault();
+
+                            const form = $(this);
+                            const id = form.data('id');
+
+                            if (confirm("Anda yakin ingin menghapus?")) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/pelamar/" + id,
+                                    data: form.serialize(),
+                                    success: function(response) {
+                                        form.closest("tr").remove();
+                                        alert("Pelamar Berhasil Dihapus!");
+                                    },
+                                    error: function(xhr) {
+                                        alert("Gagal menghapus pelamar: " + xhr
+                                            .responseText);
+                                    }
+                                });
+                            }
+                        });
+                    });
                 })
-        })
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setDatatable();
+
+            // Event listener for both filters
+            $('#filter-lowongan, #filter-gelar').on('change', function() {
+                if (dataTable) dataTable.destroy();
+                setDatatable();
+            });
+        });
+
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     setDatatable();
+        //     const btnSearch = document.getElementById('filter-lowongan');
+        //     btnSearch.addEventListener('change', function() {
+        //         if (dataTable) dataTable.destroy();
+        //         setDatatable();
+        //     })
+        // })
     </script>
 
 </x-layout.admin-default>

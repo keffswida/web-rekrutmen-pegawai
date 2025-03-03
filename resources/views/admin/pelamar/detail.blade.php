@@ -429,10 +429,12 @@
                                                             <label for="gelar" class="form-label">Gelar</label>
                                                             <select name="gelar" id="gelar" class="form-input">
                                                                 <option value="">Pilih Gelar Anda</option>
-                                                                <option value="0">D3</option>
-                                                                <option value="1">D4</option>
-                                                                <option value="2">S1</option>
-                                                                <option value="3">S2</option>
+                                                                <option value="0">SMA</option>
+                                                                <option value="1">SMK</option>
+                                                                <option value="2">D3</option>
+                                                                <option value="3">D4</option>
+                                                                <option value="4">S1</option>
+                                                                <option value="5">S2</option>
                                                             </select>
                                                         </div>
 
@@ -571,15 +573,21 @@
                                                                                     Pilih Gelar Anda</option>
                                                                                 <option
                                                                                     value="0"{{ $pendidikan->gelar == '0' ? 'selected' : '' }}>
-                                                                                    D3</option>
+                                                                                    SMA</option>
                                                                                 <option
                                                                                     value="1"{{ $pendidikan->gelar == '1' ? 'selected' : '' }}>
-                                                                                    D4</option>
+                                                                                    SMK</option>
                                                                                 <option
                                                                                     value="2"{{ $pendidikan->gelar == '2' ? 'selected' : '' }}>
-                                                                                    S1</option>
+                                                                                    D3</option>
                                                                                 <option
                                                                                     value="3"{{ $pendidikan->gelar == '3' ? 'selected' : '' }}>
+                                                                                    D4</option>
+                                                                                <option
+                                                                                    value="4"{{ $pendidikan->gelar == '4' ? 'selected' : '' }}>
+                                                                                    S1</option>
+                                                                                <option
+                                                                                    value="5"{{ $pendidikan->gelar == '5' ? 'selected' : '' }}>
                                                                                     S2</option>
                                                                             </select>
                                                                         </div>
@@ -1228,21 +1236,21 @@
                                                         <!-- Sertifikat -->
                                                         <div class="mt-4">
                                                             <label class="block mb-2">Sertifikat</label>
-                                                            <div id="sertifikatRows">
-                                                                <div class="flex items-center gap-2 mb-2">
-                                                                    <input type="text" name="sertifikat[]"
-                                                                        class="form-input flex-1"
-                                                                        placeholder="Masukkan Sertifikat" required />
-                                                                    <input type="file" name="sertifikat_image[]"
-                                                                        class="form-input flex-1"
-                                                                        accept="image/*,application/pdf" />
-                                                                    <button type="button" class="btn btn-danger"
-                                                                        onclick="deleteRow(this)">-</button>
-                                                                </div>
+                                                            {{-- <div id="sertifikatRows"> --}}
+                                                            <div class="flex items-center gap-2 mb-2">
+                                                                <input type="text" name="sertifikat[]"
+                                                                    class="form-input flex-1"
+                                                                    placeholder="Masukkan Sertifikat" required />
+                                                                <input type="file" name="sertifikat_image[]"
+                                                                    class="form-input flex-1"
+                                                                    accept="image/*,application/pdf" />
+                                                                {{-- <button type="button" class="btn btn-danger"
+                                                                        onclick="deleteRow(this)">-</button> --}}
+                                                                {{-- </div> --}}
                                                             </div>
-                                                            <button type="button" class="btn btn-primary mt-2"
+                                                            {{-- <button type="button" class="btn btn-primary mt-2"
                                                                 onclick="addRow('sertifikat')">+
-                                                                Tambah Sertifikat</button>
+                                                                Tambah Sertifikat</button> --}}
                                                         </div>
 
                                                         <div class="flex justify-end items-center mt-8">

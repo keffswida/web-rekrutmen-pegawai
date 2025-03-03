@@ -70,7 +70,7 @@ class LowonganController extends Controller
             'kualifikasi' => 'required|string',
             'deskripsi' => 'required|string',
             'kebutuhan_pelamar' => 'required|integer',
-            'brosur' => 'nullable|file|mimes:png,jpg,jpeg',
+            'brosur' => 'nullable|image|mimes:png,jpg,jpeg',
             'status_low' => 'required|in:0,1',
         ]);
 
@@ -78,15 +78,11 @@ class LowonganController extends Controller
             return redirect()->back()
                 ->withErrors($validator)
                 ->withInput();
+            // dd($validator->errors());
         }
 
         $data = $request->all();
 
-        // dd($data);
-
-        // if ($request->hasFile('brosur')) {
-        //     $data['brosur'] = $request->file('brosur')->store('brosur', 'public');
-        // }
         $data['brosur'] = null;
         if ($request->hasFile('brosur')) {
             $data['brosur'] = $request->file('brosur')->store('brosur', 'public');

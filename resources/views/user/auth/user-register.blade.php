@@ -216,10 +216,11 @@
                                             </div>
                                         </div>
                                         <div class="sm:col-span-2">
-                                            <label for="status" class="text-sm font-semibold text-gray-900">Status
+                                            <label for="status_kawin"
+                                                class="text-sm font-semibold text-gray-900">Status
                                                 Pernikahan</label>
-                                            <select id="status" name="status" x-model="status"
-                                                autocomplete="status" aria-label="Status"
+                                            <select id="status_kawin" name="status_kawin" x-model="status"
+                                                autocomplete="status_kawin" aria-label="Status"
                                                 class="form-input col-start-1 row-start-1 w-full appearance-none rounded-md sm:text-sm/6">
                                                 <option value="">Pilih Status Anda</option>
                                                 <option value="0">Sudah Menikah</option>

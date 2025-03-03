@@ -54,4 +54,9 @@ class Pelamar extends Authenticable
     {
         return $this->belongsTo(Posisi::class, 'posisi_id');
     }
+
+    public function pendidikan()
+    {
+        return $this->hasMany(Pendidikan::class, 'id_pelamar');
+    }
 }

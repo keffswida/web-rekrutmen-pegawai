@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Files;
 use App\Models\Posisi;
 use App\Models\Pelamar;
 use App\Models\Lowongan;
 use App\Models\Departemen;
-use App\Models\Files;
 use App\Models\Pendidikan;
 use App\Models\Pengalaman;
 use App\Models\Sertifikat;
 use App\Models\Keterampilan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class PelamarController extends Controller
@@ -22,22 +22,45 @@ class PelamarController extends Controller
      */
     public function index()
     {
-        $pelamars = Pelamar::all();
+        $pelamar = Pelamar::all();
         $departemen = Departemen::all();
         $posisi = Posisi::all();
         $lowongan = Lowongan::all();
+        $pendidikan = Pendidikan::all();
 
-        return view('admin.pelamar.list', compact('pelamars', 'lowongan', 'departemen', 'posisi'));
+        return view('admin.pelamar.list', compact('pelamar', 'lowongan', 'departemen', 'posisi', 'pendidikan'));
     }
 
-    public function getDataPelamar()
+    public function getDataPelamar(Request $request)
     {
         try {
-            $pelamars = Pelamar::with(['lowongan', 'departemen', 'posisi'])
+            $lowongan = $request->query('lowongan');
+            $gelar = $request->query('gelar'); // Ensure it matches the frontend filter name
+
+            $pelamars = Pelamar::with(['lowongan', 'departemen', 'posisi', 'pendidikan'])
+                ->when(!empty($lowongan) && (int) $lowongan > 0, function ($query) use ($lowongan) {
+                    $query->where('lowongan_id', $lowongan);
+                })
+                ->when(isset($gelar) && (int) $gelar >= 0, function ($query) use ($gelar) {
+                    $query->whereHas('pendidikan', function ($subQuery) use ($gelar) {
+                        $subQuery->where('gelar', $gelar);
+                    });
+                })
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            $datas = $pelamars->map(function ($pelamar) {
+            $gelarList = [
+                0 => 'SMA',
+                1 => 'SMK',
+                2 => 'D3',
+                3 => 'D4',
+                4 => 'S1',
+                5 => 'S2',
+            ];
+
+            $datas = $pelamars->map(function ($pelamar) use ($gelarList) {
+                $gelarCode = optional($pelamar->pendidikan->first())->gelar;
+
                 return [
                     'id' => $pelamar->id,
                     'nama_lengkap' => $pelamar->nama_lengkap,
@@ -46,7 +69,8 @@ class PelamarController extends Controller
                     'email' => $pelamar->email,
                     'password' => $pelamar->password,
                     'alamat' => $pelamar->alamat,
-                    'lowongan' => $pelamar->lowongan->posisi->nama_posisi ?? 'Takde',
+                    'lowongan' => optional($pelamar->lowongan->posisi)->nama_posisi ?? 'Tidak ada',
+                    'gelar' => isset($gelarCode) && array_key_exists($gelarCode, $gelarList) ? $gelarList[$gelarCode] : 'Tidak diketahui',
                 ];
             });
 
@@ -61,6 +85,7 @@ class PelamarController extends Controller
             ]);
         }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -93,12 +118,7 @@ class PelamarController extends Controller
             'alamat' => 'required|string',
             'no_telp' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|password|min:8',
-            // 'pendidikan' => 'required|array',
-            // 'pengalaman' => 'required|array',
-            // 'keterampilan' => 'required|array',
-            // 'sertifikat' => 'required|array',
-            // 'sertifikat_image.*' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
+            'password' => 'required|min:8',
             'profile' => 'required|file|mimes:png,jpg,jpeg',
             'cv' => 'required|file|mimes:png,jpg,jpeg,pdf',
             'departemen_id' => 'nullable|exists:departemen,id',
@@ -117,13 +137,6 @@ class PelamarController extends Controller
             $cvPath = $request->file('cv')->store('cvs', 'public');
         }
 
-        // $sertifikatImage = [];
-        // if ($request->hasFile('sertifikat_image')) {
-        //     foreach ($request->file('sertifikat_image') as $image) {
-        //         $sertifikatImage[] = $image->store('sertifikat_image', 'public');
-        //     }
-        // }
-
         $pelamar = Pelamar::create([
             'lowongan_id' => $validatedData['lowongan_id'],
             // 'departemen_id' => $validatedData['departemen_id'],
@@ -139,11 +152,6 @@ class PelamarController extends Controller
             'no_telp' => $validatedData['no_telp'],
             'email' => $validatedData['email'],
             'password' => $validatedData['password'],
-            // 'pendidikan' => json_encode($validatedData['pendidikan']),
-            // 'pengalaman' => json_encode($validatedData['pengalaman']),
-            // 'keterampilan' => json_encode($validatedData['keterampilan']),
-            // 'sertifikat' => json_encode($validatedData['sertifikat']),
-            // 'sertifikat_image' => json_encode($sertifikatImage),
             'profile' => $profilePath,
             'cv' => $cvPath,
         ]);
@@ -156,9 +164,6 @@ class PelamarController extends Controller
      */
     public function show(Pelamar $pelamar)
     {
-        // $pelamar = Pelamar::find($id);
-        // $pelamar = Pelamar::all();
-        // dd($pelamar);
         $departemen = Departemen::all();
         $posisi = Posisi::all();
         $lowongan = Lowongan::all();
@@ -189,13 +194,16 @@ class PelamarController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Pelamar $pelamar)
+    public function edit($id)
     {
+        $pelamar = Pelamar::findOrFail($id);
         $departemen = Departemen::all();
         $posisi = Posisi::all();
         $lowongan = Lowongan::all();
 
-        return view('pelamar.index', compact('pelamar', 'lowongan', 'departemen', 'posisi'));
+        // return response()->json($pelamar);
+
+        return view('admin.pelamar.edit', compact('pelamar', 'lowongan', 'departemen', 'posisi'));
     }
 
     /**
@@ -216,12 +224,7 @@ class PelamarController extends Controller
             'alamat' => 'required|string',
             'no_telp' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required|password|min:8',
-            // 'pendidikan' => 'required|array',
-            // 'pengalaman' => 'required|array',
-            // 'keterampilan' => 'required|array',
-            // 'sertifikat' => 'required|array',
-            // 'sertifikat_image.*' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
+            'password' => 'required|min:8',
             'profile' => 'nullable|file|mimes:png,jpg,jpeg',
             'cv' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
             'departemen_id' => 'nullable|exists:departemen,id',
@@ -258,62 +261,13 @@ class PelamarController extends Controller
             unset($validatedData['cv']);
         }
 
-        // $sertifikatImage = [];
-        // if ($request->hasFile('sertifikat_image')) {
-        //     if ($pelamar->sertifikat_image) {
-        //         foreach (json_decode($pelamar->sertifikat_image) as $image) {
-        //             if (Storage::disk('public')->exists($image)) {
-        //                 Storage::disk('public')->delete($image);
-        //             }
-        //         }
-        //     }
-        //     foreach ($request->file('sertifikat_image') as $image) {
-        //         $sertifikatImage[] = $image->store('sertifikat_image', 'public');
-        //     }
-        //     $validatedData['sertifikat_image'] = json_encode($sertifikatImage);
-        // }
+        if ($request->filled('password')) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
 
-        // $existingSertifikat = json_decode($pelamar->sertifikat, true) ?? [];
-        // $existingSertifikatImages = json_decode($pelamar->sertifikat_image, true) ?? [];
-
-        // $newSertifikat = $request->input('sertifikat', []);
-        // $newSertifikatImages = $request->input('sertifikat_image', []);
-
-        // foreach ($newSertifikat as $index => $sertifikat) {
-        //     if (!empty($sertifikat)) {
-        //         $existingSertifikat[] = $sertifikat;
-
-        //         if (isset($newSertifikatImages[$index])) {
-        //             // $file = $newSertifikatImages[$index];
-        //             $filePath = $newSertifikatImages[$index]->store('sertifikat_image', 'public');
-        //             $existingSertifikatImages[] = $filePath;
-        //         } else {
-        //             $existingSertifikatImages[] = $existingSertifikatImages[$index] ?? null;
-        //         }
-        //     }
-        // }
-
-        $pelamar->update([
-            'lowongan_id' => $validatedData['lowongan_id'],
-            'nama_lengkap' => $validatedData['nama_lengkap'],
-            'nama_panggilan' => $validatedData['nama_panggilan'],
-            'jenis_kelamin' => $validatedData['jenis_kelamin'],
-            'agama' => $validatedData['agama'],
-            'tempat_lahir' => $validatedData['tempat_lahir'],
-            'tgl_lahir' => $validatedData['tgl_lahir'],
-            'status_kawin' => $validatedData['status_kawin'],
-            'alamat' => $validatedData['alamat'],
-            'no_telp' => $validatedData['no_telp'],
-            'email' => $validatedData['email'],
-            'password' => $validatedData['password'],
-            // 'pendidikan' => json_encode($validatedData['pendidikan']),
-            // 'pengalaman' => json_encode($validatedData['pengalaman']),
-            // 'keterampilan' => json_encode($validatedData['keterampilan']),
-            // 'sertifikat' => json_encode($validatedData['sertifikat']),
-            // 'sertifikat_image' => $validatedData['sertifikat_image'] ?? $pelamar->sertifikat_image,
-            'profile' => $validatedData['profile'] ?? $pelamar->profile,
-            'cv' => $validatedData['cv'] ?? $pelamar->cv,
-        ]);
+        $pelamar->update($validatedData);
 
         return redirect()->route('pelamar.index')->with('success', 'Pelamar berhasil diperbarui!');
     }
@@ -330,14 +284,6 @@ class PelamarController extends Controller
         if ($pelamar->cv) {
             Storage::disk('public')->delete($pelamar->cv);
         }
-
-        // if ($pelamar->sertifikat_image) {
-        //     foreach (json_decode($pelamar->sertifikat_image) as $image) {
-        //         if (Storage::disk('public')->exists($image)) {
-        //             Storage::disk('public')->delete($image);
-        //         }
-        //     }
-        // }
 
         $pelamar->delete();
 

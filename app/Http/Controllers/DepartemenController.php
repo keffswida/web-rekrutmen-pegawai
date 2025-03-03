@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Departemen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DepartemenController extends Controller
 {
@@ -15,6 +17,39 @@ class DepartemenController extends Controller
         $departemens = Departemen::all();
         return view('admin.master.departemen.departemen', compact('departemens'));
     }
+
+    public function getDepartemen(Request $request)
+    {
+        try {
+            $departemens = $request->query('departemen');
+            $where = [];
+            if ((int) $departemens > 0)
+                $where['id'] = $departemens;
+
+            $departemen = DB::table('departemen')->where($where)->select('id', 'nama_departemen', 'status')->get();
+
+            Log::info('Departemen Data:', ['data' => $departemens]);
+
+            $datas = $departemen->map(function ($d) {
+                return [
+                    'id' => $d->id,
+                    'nama_departemen' => $d->nama_departemen,
+                    'status' => $d->status,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $datas,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve data: ' . $e->getMessage()
+            ]);
+        }
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -51,9 +86,13 @@ class DepartemenController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Departemen $departemen)
+    public function edit($id)
     {
-        return view('departemen.edit', compact('departemen'));
+
+        $departemen = Departemen::findOrFail($id);
+        return response()->json($departemen);
+
+        // return view('departemen.edit', compact('departemen'));
     }
 
     /**

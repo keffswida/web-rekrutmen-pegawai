@@ -102,6 +102,11 @@
                                     <input id="email" type="email" name="email" class="form-input flex-1"
                                         placeholder="Masukkan Email" required />
                                 </div>
+                                <div class="flex items-center mt-4">
+                                    <label for="password" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Password</label>
+                                    <input id="password" type="password" name="password" class="form-input flex-1"
+                                        placeholder="Masukkan Password" required />
+                                </div>
                             </div>
                         </div>
 
