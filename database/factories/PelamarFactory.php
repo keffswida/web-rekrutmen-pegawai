@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Pelamar;
 use App\Models\Lowongan;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,9 +25,10 @@ class PelamarFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::inRandomOrder()->first()->id ?? User::factory()->create()->id,
             'lowongan_id' => Lowongan::inRandomOrder()->first()->id ?? Lowongan::factory()->create()->id,
-            'nama_lengkap' => $this->faker->name(),
-            'nama_panggilan' => $this->faker->firstName(),
+            'nama_lengkap' => fn($attributes) => User::find($attributes['user_id'])->nama_lengkap,
+            'nama_panggilan' => fn($attributes) => User::find($attributes['user_id'])->nama_panggilan,
             'jenis_kelamin' => $this->faker->randomElement(['0', '1']),
             'agama' => $this->faker->randomElement(['0', '1', '2', '3', '4', '5']),
             'tempat_lahir' => $this->faker->city(),
@@ -34,18 +36,8 @@ class PelamarFactory extends Factory
             'status_kawin' => $this->faker->randomElement(['0', '1']),
             'alamat' => $this->faker->address(),
             'no_telp' => $this->faker->phoneNumber(),
-            'email' => $this->faker->email(),
-            'password' => bcrypt('password'),
-            // 'profile' => function () {
-            //     Storage::makeDirectory('public/profiles'); // Make sure directory exists
-            //     $file = UploadedFile::fake()->image('profile.jpg'); // Create fake image
-            //     return $file->store('profiles', 'public'); // Store it
-            // },
-            // 'cv' => function () {
-            //     Storage::makeDirectory('public/cvs'); // Make sure directory exists
-            //     $file = UploadedFile::fake()->image('cv.jpg'); // Create fake image
-            //     return $file->store('cvs', 'public'); // Store it
-            // },
+            'email' => fn($attributes) => User::find($attributes['user_id'])->email,
+            'password' => fn($attributes) => User::find($attributes['user_id'])->password,
             'profile' => fn() => UploadedFile::fake()->image('profile.jpg')->store('profiles', 'public'),
             'cv' => fn() => UploadedFile::fake()->image('cv.jpg')->store('cvs', 'public'),
 

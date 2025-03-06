@@ -52,7 +52,7 @@
                         <th>Nama Panggilan</th>
                         <th>Gelar</th>
                         <th>No. Telepon</th>
-                        <th>Email</th>
+                        {{-- <th>Email</th> --}}
                         <th>Alamat</th>
                     </tr>
                 </thead>
@@ -108,7 +108,7 @@
                     dataTable = new simpleDatatables.DataTable("#list_pelamar", {
                         data: {
                             headings: ['No', 'Aksi', 'Lowongan', 'Nama Lengkap', 'Nama Panggilan', 'Gelar',
-                                'No. Telp', 'Email', 'Alamat'
+                                'Email', 'No. Telp', 'Alamat'
                             ],
                             data: responseData.data.map((item, index) => [
                                 index + 1,
@@ -165,8 +165,8 @@
                                 item.nama_lengkap,
                                 item.nama_panggilan,
                                 item.gelar,
-                                item.no_telp,
                                 item.email,
+                                item.no_telp,
                                 item.alamat
                             ])
                         },

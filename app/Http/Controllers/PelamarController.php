@@ -11,6 +11,7 @@ use App\Models\Pendidikan;
 use App\Models\Pengalaman;
 use App\Models\Sertifikat;
 use App\Models\Keterampilan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -35,7 +36,8 @@ class PelamarController extends Controller
     {
         try {
             $lowongan = $request->query('lowongan');
-            $gelar = $request->query('gelar'); // Ensure it matches the frontend filter name
+            $gelar = $request->query('gelar');
+            $user = $request->query('email');
 
             $pelamars = Pelamar::with(['lowongan', 'departemen', 'posisi', 'pendidikan'])
                 ->when(!empty($lowongan) && (int) $lowongan > 0, function ($query) use ($lowongan) {
@@ -45,6 +47,9 @@ class PelamarController extends Controller
                     $query->whereHas('pendidikan', function ($subQuery) use ($gelar) {
                         $subQuery->where('gelar', $gelar);
                     });
+                })
+                ->when(!empty($user) && (int) $user > 0, function ($query) use ($user) {
+                    $query->where('user_id', $user);
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -67,7 +72,6 @@ class PelamarController extends Controller
                     'nama_panggilan' => $pelamar->nama_panggilan,
                     'no_telp' => $pelamar->no_telp,
                     'email' => $pelamar->email,
-                    'password' => $pelamar->password,
                     'alamat' => $pelamar->alamat,
                     'lowongan' => optional($pelamar->lowongan->posisi)->nama_posisi ?? 'Tidak ada',
                     'gelar' => isset($gelarCode) && array_key_exists($gelarCode, $gelarList) ? $gelarList[$gelarCode] : 'Tidak diketahui',
@@ -76,7 +80,7 @@ class PelamarController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $datas
+                'data' => $datas,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -85,7 +89,6 @@ class PelamarController extends Controller
             ]);
         }
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -187,8 +190,9 @@ class PelamarController extends Controller
             ->with('pelamar')
             ->orderBy('created_at', 'desc')
             ->get();
+        $user = User::all();
 
-        return view('admin.pelamar.detail', compact('pelamar', 'lowongan', 'departemen', 'posisi', 'sertifikats', 'pendidikans', 'pengalamans', 'keterampilans', 'files'));
+        return view('admin.pelamar.detail', compact('pelamar', 'lowongan', 'departemen', 'posisi', 'sertifikats', 'pendidikans', 'pengalamans', 'keterampilans', 'files', 'user'));
     }
 
     /**

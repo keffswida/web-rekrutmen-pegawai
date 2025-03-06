@@ -13,6 +13,6 @@ class LowonganSeeder extends Seeder
      */
     public function run(): void
     {
-        Lowongan::factory()->count(20)->create();
+        Lowongan::factory()->count(1)->create();
     }
 }

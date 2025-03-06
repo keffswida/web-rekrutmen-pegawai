@@ -14,6 +14,7 @@ class Pelamar extends Authenticable
     protected $table = 'pelamar';
 
     protected $fillable = [
+        'user_id',
         'lowongan_id',
         // 'departemen_id',
         // 'posisi_id',
@@ -32,13 +33,14 @@ class Pelamar extends Authenticable
         'cv',
     ];
 
-    protected $hidden = [
-        'password',
-    ];
-
     protected $casts = [
         'tgl_lahir' => 'date:d-m-Y'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function lowongan()
     {

@@ -36,7 +36,7 @@ class LoginController extends Controller
             'password' => 'required'
         ]);
 
-        if (Auth::guard('pelamar')->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             // Debugging: Check if the user is authenticated
@@ -46,7 +46,7 @@ class LoginController extends Controller
             //     'user' => Auth::guard('pelamar')->user()
             // ]);
 
-            return redirect()->intended('/');
+            return redirect()->intended('/career');
         }
 
         // return response()->json([

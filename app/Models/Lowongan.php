@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Lowongan extends Model
 {
@@ -12,8 +13,10 @@ class Lowongan extends Model
     protected $table = 'lowongan';
 
     protected $fillable = [
+        'uuid',
         'posisi_id',
         'departemen_id',
+        'slug',
         'lokasi',
         'tgl_buka',
         'tgl_tutup',
@@ -23,6 +26,17 @@ class Lowongan extends Model
         'brosur',
         'status_low',
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($lowongan) {
+            $namaPosisi = Posisi::find($lowongan->posisi_id)->nama_posisi ?? 'lowongan';
+
+            $lowongan->slug = Str::slug($namaPosisi);
+            $lowongan->uuid = Str::uuid();
+        });
+    }
 
     public function posisi()
     {

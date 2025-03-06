@@ -19,7 +19,7 @@
                                 d="M17.75 5.00005C17.75 4.68619 17.5546 4.40553 17.2602 4.29664C16.9658 4.18774 16.6348 4.27366 16.4306 4.51196L10.4306 11.512C10.1898 11.7928 10.1898 12.2073 10.4306 12.4881L16.4306 19.4881C16.6348 19.7264 16.9658 19.8124 17.2602 19.7035C17.5546 19.5946 17.75 19.3139 17.75 19L17.75 5.00005Z"
                                 fill="currentColor" />
                         </svg>
-                        Back
+                        Back to list
                     </a>
                 </div>
             </div>
@@ -241,7 +241,7 @@
                                                         Email</p>
                                                     <p
                                                         class="mt-1 w-full break-words whitespace-normal overflow-wrap anywhere">
-                                                        {{ $pelamar->email }}
+                                                        {{ $pelamar->user->email }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -279,16 +279,20 @@
                                             @foreach ($pendidikans as $pendidikan)
                                                 <li>{{ $pendidikan->nama_institusi }}
                                                     {{ $pendidikan->tahun_masuk }} - {{ $pendidikan->tahun_lulus }}
-                                                    (@if ($pendidikan->gelar == '0')
-                                                        D3
-                                                    @elseif ($pendidikan->gelar == '1')
-                                                        D4
-                                                    @elseif ($pendidikan->gelar == '2')
-                                                        S1
-                                                    @elseif ($pendidikan->gelar == '3')
-                                                        S2
-                                                    @elseif ($pendidikan->gelar == '')
+                                                    (@if ($pendidikan->gelar == '')
                                                         -
+                                                    @elseif ($pendidikan->gelar == '0')
+                                                        SMA
+                                                    @elseif ($pendidikan->gelar == '1')
+                                                        SMK
+                                                    @elseif ($pendidikan->gelar == '2')
+                                                        D3
+                                                    @elseif ($pendidikan->gelar == '3')
+                                                        D4
+                                                    @elseif ($pendidikan->gelar == '4')
+                                                        S1
+                                                    @elseif ($pendidikan->gelar == '5')
+                                                        S2
                                                     @endif)
                                                 </li>
                                             @endforeach
@@ -670,15 +674,17 @@
                                             <td>{{ $pendidikan->jurusan }}</td>
                                             <td>
                                                 @if ($pendidikan->gelar == '0')
-                                                    D3
+                                                    SMA
                                                 @elseif ($pendidikan->gelar == '1')
-                                                    D4
+                                                    SMK
                                                 @elseif ($pendidikan->gelar == '2')
-                                                    S1
+                                                    D3
                                                 @elseif ($pendidikan->gelar == '3')
+                                                    D4
+                                                @elseif ($pendidikan->gelar == '4')
+                                                    S1
+                                                @elseif ($pendidikan->gelar == '5')
                                                     S2
-                                                @elseif ($pendidikan->gelar == '')
-                                                    -
                                                 @endif
                                             </td>
                                             <td>{{ $pendidikan->tahun_masuk }}</td>
@@ -1221,14 +1227,6 @@
                                                     enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="p-5">
-                                                        <div class="mb-4">
-                                                            <label for="nama_lengkap" class="form-label">Nama
-                                                                Pelamar</label>
-                                                            <input type="text" name="nama_lengkap"
-                                                                id="nama_lengkap"
-                                                                value="{{ $pelamar->nama_lengkap }}"
-                                                                class="form-input" disabled>
-                                                        </div>
 
                                                         <input type="hidden" name="id_pelamar"
                                                             value="{{ $pelamar->id }}">
@@ -1236,21 +1234,14 @@
                                                         <!-- Sertifikat -->
                                                         <div class="mt-4">
                                                             <label class="block mb-2">Sertifikat</label>
-                                                            {{-- <div id="sertifikatRows"> --}}
                                                             <div class="flex items-center gap-2 mb-2">
-                                                                <input type="text" name="sertifikat[]"
+                                                                <input type="text" name="sertifikat"
                                                                     class="form-input flex-1"
-                                                                    placeholder="Masukkan Sertifikat" required />
-                                                                <input type="file" name="sertifikat_image[]"
+                                                                    placeholder="Masukkan Nama Sertifikat" required />
+                                                                <input type="file" name="sertifikat_image"
                                                                     class="form-input flex-1"
                                                                     accept="image/*,application/pdf" />
-                                                                {{-- <button type="button" class="btn btn-danger"
-                                                                        onclick="deleteRow(this)">-</button> --}}
-                                                                {{-- </div> --}}
                                                             </div>
-                                                            {{-- <button type="button" class="btn btn-primary mt-2"
-                                                                onclick="addRow('sertifikat')">+
-                                                                Tambah Sertifikat</button> --}}
                                                         </div>
 
                                                         <div class="flex justify-end items-center mt-8">
@@ -1348,30 +1339,28 @@
                                                                         <div class="mt-4">
                                                                             <label
                                                                                 class="block mb-2">Sertifikat</label>
-                                                                            <div id="editSertifikatRows">
-                                                                                @foreach (json_decode($sertifikat->sertifikat) as $index => $cert)
-                                                                                    <div
-                                                                                        class="flex items-center gap-2 mb-2">
-                                                                                        <input type="text"
-                                                                                            name="sertifikat[]"
-                                                                                            class="form-input flex-1"
-                                                                                            value="{{ $cert }}"
-                                                                                            required />
-                                                                                        <input type="file"
-                                                                                            name="sertifikat_image[]"
-                                                                                            class="form-input flex-1"
-                                                                                            accept="image/*,application/pdf" />
-                                                                                        <button type="button"
-                                                                                            class="btn btn-danger"
-                                                                                            onclick="deleteRow(this)">-</button>
-                                                                                    </div>
-                                                                                @endforeach
+                                                                            <div class="mb-4">
+                                                                                <label for="sertifikat"
+                                                                                    class="form-label">Sertifikat</label>
+                                                                                <input type="text"
+                                                                                    name="sertifikat" id="sertifikat"
+                                                                                    class="form-input"
+                                                                                    value="{{ $sertifikat->sertifikat }}"
+                                                                                    required>
                                                                             </div>
-                                                                            <button type="button"
-                                                                                class="btn btn-primary mt-2"
-                                                                                onclick="addRow('editSertifikat')">+
-                                                                                Tambah
-                                                                                Sertifikat</button>
+
+                                                                            <div class="mb-4">
+                                                                                <label for="sertifikat_image"
+                                                                                    class="form-label">File</label>
+                                                                                <input type="file"
+                                                                                    name="sertifikat_image"
+                                                                                    id="sertifikat_image"
+                                                                                    class="form-input" required>
+                                                                                <a href="{{ asset('storage/' . $sertifikat->sertifikat_image) }}"
+                                                                                    target="_blank"
+                                                                                    class="text-blue-500 underline">Lihat
+                                                                                    Sertifikat</a>
+                                                                            </div>
                                                                         </div>
                                                                         <div
                                                                             class="flex justify-end items-center mt-8">
@@ -1424,24 +1413,15 @@
                                             <td>{{ $sertifikat->pelamar->nama_lengkap }}
                                             </td>
                                             <td>
-                                                @php
-                                                    $sertifikatList = json_decode($sertifikat->sertifikat);
-                                                    echo implode(', ', $sertifikatList);
-                                                @endphp
+                                                {{ $sertifikat->sertifikat }}
                                             </td>
                                             <td>
-                                                @php
-                                                    $sertifikatImages =
-                                                        json_decode($sertifikat->sertifikat_image, true) ?? [];
-                                                @endphp
-
-                                                @if (!empty($sertifikatImages))
-                                                    @foreach ($sertifikatImages as $image)
-                                                        <a href="{{ Storage::url($image) }}" target="_blank">
-                                                            <img src="{{ Storage::url($image) }}"
-                                                                alt="File Sertifikat" width="100">
-                                                        </a>
-                                                    @endforeach
+                                                @if (!empty($sertifikat->sertifikat_image))
+                                                    <a href="{{ asset('storage/' . $sertifikat->sertifikat_image) }}"
+                                                        target="_blank">
+                                                        <img src="{{ asset('storage/' . $sertifikat->sertifikat_image) }}"
+                                                            alt="File Sertifikat" width="100">
+                                                    </a>
                                                 @else
                                                     <p>Tidak ada sertifikat</p>
                                                 @endif
@@ -1717,7 +1697,7 @@
     </div>
 
     <!-- Add Row and Delete Row Script -->
-    <script>
+    {{-- <script>
         function addRow(type) {
             const container = document.getElementById(`${type}Rows`);
             const row = document.createElement('div');
@@ -1743,7 +1723,7 @@
             const row = button.closest('div');
             row.remove();
         }
-    </script>
+    </script> --}}
     <!-- ./ Add Row and Delete Row Script -->
 
     <!-- Berkas Script -->

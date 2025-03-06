@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Pelamar;
-use Illuminate\Database\Seeder;
+use App\Models\Files;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
-class PelamarSeeder extends Seeder
+class FilesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Pelamar::factory()->count(1)->create();
+        Files::factory()->count(1)->create();
     }
 }

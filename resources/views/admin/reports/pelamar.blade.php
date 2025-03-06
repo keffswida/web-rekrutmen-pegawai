@@ -73,27 +73,49 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Pelamar</title>
+    <title>Laporan Data Pelamar</title>
     <style>
         body {
-            font-family: sans-serif;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+        }
+
+        h2,
+        p {
+            text-align: center;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         th,
         td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 6px;
             text-align: left;
+            font-size: 10px;
         }
 
         th {
             background-color: #f2f2f2;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Handle page breaks in PDF */
+        @page {
+            margin: 20px;
+        }
+
+        /* Prevent table from breaking in half */
+        tr {
+            page-break-inside: avoid;
         }
     </style>
 </head>
@@ -103,34 +125,36 @@
     <p>Periode: {{ request('start_date') }} - {{ request('end_date') }}</p>
 
     @if ($pelamar->isNotEmpty())
-        <table>
-            <thead>
-                <tr>
-                    <th>Nama Lengkap</th>
-                    <th>Nama Panggilan</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Email</th>
-                    <th>No. Telp</th>
-                    <th>Alamat</th>
-                    <th>Lowongan</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($pelamar as $data)
+        <div class="table-container">
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ $data->nama_lengkap }}</td>
-                        <td>{{ $data->nama_panggilan }}</td>
-                        <td>{{ $data->jenis_kelamin == 0 ? 'Laki-laki' : 'Perempuan' }}</td>
-                        <td>{{ $data->email }}</td>
-                        <td>{{ $data->no_telp }}</td>
-                        <td>{{ $data->alamat }}</td>
-                        <td>{{ $data->lowongan->posisi->nama_posisi ?? 'N/A' }}</td>
+                        <th>Nama Lengkap</th>
+                        <th>Nama Panggilan</th>
+                        <th>Jenis Kelamin</th>
+                        <th>Email</th>
+                        <th>No. Telp</th>
+                        <th>Alamat</th>
+                        <th>Lowongan</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($pelamar as $data)
+                        <tr>
+                            <td>{{ $data->nama_lengkap }}</td>
+                            <td>{{ $data->nama_panggilan }}</td>
+                            <td>{{ $data->jenis_kelamin == 0 ? 'Laki-laki' : 'Perempuan' }}</td>
+                            <td>{{ $data->email }}</td>
+                            <td>{{ $data->no_telp }}</td>
+                            <td>{{ $data->alamat }}</td>
+                            <td>{{ $data->lowongan->posisi->nama_posisi ?? 'N/A' }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     @else
-        <p><strong>Tidak ada data pelamar untuk filter ini.</strong></p>
+        <p><strong>Tidak ada data pelamar untuk lowongan ini.</strong></p>
     @endif
 
 </body>

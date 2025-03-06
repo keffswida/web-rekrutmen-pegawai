@@ -47,8 +47,68 @@
                 </div>
             </nav>
 
+            {{-- @php
+                dd(Auth::guard('pelamar')->check());
+            @endphp --}}
+
+            @if (Auth::check())
+                <div class="md:block transition-all duration-300 px-6" id="login-register-section">
+                    <div class="relative text-green-800 hover:text-green-400 transition-all duration-300"
+                        x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M6 20c0-4 3-6 6-6s6 2 6 6"></path>
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false"
+                            x-transition:enter="transition ease-out duration-200 transform"
+                            x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-150 transform"
+                            x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                            class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full flex items-center gap-2 px-4 py-2 text-gray-800 hover:bg-gray-200 font-inter font-light hover:text-red-500 transition-all duration-300">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8 16C8 18.8284 8 20.2426 8.87868 21.1213C9.75736 22 11.1716 22 14 22H15C17.8284 22 19.2426 22 20.1213 21.1213C21 20.2426 21 18.8284 21 16V8C21 5.17157 21 3.75736 20.1213 2.87868C19.2426 2 17.8284 2 15 2H14C11.1716 2 9.75736 2 8.87868 2.87868C8 3.75736 8 5.17157 8 8"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                        <path
+                                            d="M8 19.5C5.64298 19.5 4.46447 19.5 3.73223 18.7678C3 18.0355 3 16.857 3 14.5V9.5C3 7.14298 3 5.96447 3.73223 5.23223C4.46447 4.5 5.64298 4.5 8 4.5"
+                                            stroke="currentColor" stroke-width="1.5" />
+                                        <path d="M6 12L15 12M15 12L12.5 14.5M15 12L12.5 9.5" stroke="currentColor"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @else
+                <div id="login-register-section" class="md:block transition-all duration-300 px-6">
+                    <a href="/login"
+                        class="relative inline-flex items-center gap-1 text-lg font-semibold text-green-800 hover:text-green-400 transition-all duration-300
+                        after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-0 after:h-[2px] after:bg-green-400 after:transition-all after:duration-300
+                        hover:after:w-full">
+                        Login
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75ZM1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C6.06294 22.75 1.25 17.9371 1.25 12ZM12.4697 8.46967C12.7626 8.17678 13.2374 8.17678 13.5303 8.46967L16.5303 11.4697C16.8232 11.7626 16.8232 12.2374 16.5303 12.5303L13.5303 15.5303C13.2374 15.8232 12.7626 15.8232 12.4697 15.5303C12.1768 15.2374 12.1768 14.7626 12.4697 14.4697L14.1893 12.75H8C7.58579 12.75 7.25 12.4142 7.25 12C7.25 11.5858 7.58579 11.25 8 11.25H14.1893L12.4697 9.53033C12.1768 9.23744 12.1768 8.76256 12.4697 8.46967Z"
+                                fill="currentColor" />
+                        </svg>
+                    </a>
+                </div>
+            @endif
+
             <!-- Login/Register Section (Right Side) - Hidden on mobile -->
-            <div id="login-register-section" class="hidden md:block transition-all duration-300 px-6">
+            {{-- <div id="login-register-section" class="hidden md:block transition-all duration-300 px-6">
                 <a href="/login"
                     class="relative inline-flex items-center gap-1 text-lg font-semibold text-green-800 hover:text-green-400 transition-all duration-300
                 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-0 after:h-[2px] after:bg-green-400 after:transition-all after:duration-300
@@ -61,7 +121,7 @@
                             fill="currentColor" />
                     </svg>
                 </a>
-            </div>
+            </div> --}}
         </div>
 
         <!-- Mobile Menu (Hidden by default) -->
@@ -76,7 +136,7 @@
                     Us</a>
                 <a href="/career"
                     class="text-lg font-semibold text-green-800 hover:text-green-400 transform transition-all duration-300 translate-x-4 opacity-0">Lowongan</a>
-                <a href="#"
+                <a href="/login"
                     class="text-lg font-semibold text-green-800 hover:text-green-400 transform transition-all duration-300 translate-x-4 opacity-0">Login</a>
             </nav>
         </div>

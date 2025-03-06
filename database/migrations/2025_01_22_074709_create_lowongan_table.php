@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('lowongan', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique();
             $table->unsignedBigInteger('posisi_id');
             $table->unsignedBigInteger('departemen_id');
+            $table->string('slug')->unique();
             $table->string('lokasi');
             $table->date('tgl_buka');
             $table->date('tgl_tutup');

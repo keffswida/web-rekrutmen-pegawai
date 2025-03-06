@@ -13,6 +13,6 @@ class PendidikanSeeder extends Seeder
      */
     public function run(): void
     {
-        Pendidikan::factory()->count(5)->create();
+        Pendidikan::factory()->count(1)->create();
     }
 }

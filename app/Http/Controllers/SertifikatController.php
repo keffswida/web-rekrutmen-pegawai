@@ -37,23 +37,21 @@ class SertifikatController extends Controller
         // dd($request->all());
         $validatedData = $request->validate([
             'id_pelamar' => 'required|exists:pelamar,id',
-            'sertifikat' => 'required|array',
-            'sertifikat_image.*' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
+            'sertifikat' => 'required|string',
+            'sertifikat_image' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
         ]);
         // dd($validatedData);
         // echo ('tes');
 
-        $sertifikatImage = [];
+        $sertifikatImage = null;
         if ($request->hasFile('sertifikat_image')) {
-            foreach ($request->file('sertifikat_image') as $image) {
-                $sertifikatImage[] = $image->store('sertifikat_image', 'public');
-            }
+            $sertifikatImage = $request->file('sertifikat_image')->store('sertifikat_image', 'public');
         }
 
         $sertifikat = Sertifikat::create([
             'id_pelamar' => $validatedData['id_pelamar'],
-            'sertifikat' => json_encode($validatedData['sertifikat']),
-            'sertifikat_image' => json_encode($sertifikatImage),
+            'sertifikat' => $validatedData['sertifikat'],
+            'sertifikat_image' => $sertifikatImage,
         ]);
         // dd($sertifikat);
 
@@ -89,29 +87,26 @@ class SertifikatController extends Controller
     public function update(Request $request, Sertifikat $sertifikat)
     {
         $validatedData = $request->validate([
-            'sertifikat' => 'required|array',
-            'sertifikat_image.*' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
+            'sertifikat' => 'required|string',
+            'sertifikat_image' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
         ]);
 
-        $sertifikatImage = [];
         if ($request->hasFile('sertifikat_image')) {
             if ($sertifikat->sertifikat_image) {
-                $old = json_decode($sertifikat->sertifikat_image);
-                foreach ($old as $image) {
-                    if (Storage::disk('public')->exists($image)) {
-                        Storage::disk('public')->delete($image);
-                    }
-                }
+                Storage::disk('public')->delete($sertifikat->sertifikat_image);
+
+                $sertifPath = dirname($sertifikat->sertifikat_image);
+            } else {
+                $sertifPath = '/sertifikat_image';
             }
 
-            foreach ($request->file('sertifikat_image') as $image) {
-                $sertifikatImage[] = $image->store('sertifikat_image', 'public');
-            }
+            $sertifikatImage = $request->file('sertifikat_image')->store($sertifPath, 'public');
+            $validatedData['sertifikat_image'] = $sertifikatImage;
         } else {
-            $validatedData['sertifikat'] = $sertifikat->sertifikat_image;
+            unset($validatedData['sertifikat_image']);
         }
 
-        $validatedData['sertifikat'] = json_encode($validatedData['sertifikat']);
+        // $validatedData['sertifikat'] = json_encode($validatedData['sertifikat']);
 
         $sertifikat->update($validatedData);
 
@@ -128,12 +123,7 @@ class SertifikatController extends Controller
         $pelamarId = $sertifikat->id_pelamar;
 
         if ($sertifikat->sertifikat_image) {
-            $images = json_decode($sertifikat->sertifikat_image);
-            foreach ($images as $image) {
-                if (Storage::disk('public')->exists($image)) {
-                    Storage::disk('public')->delete($image);
-                }
-            }
+            Storage::disk('public')->delete($sertifikat->sertifikat_image);
         }
 
         $sertifikat->delete();

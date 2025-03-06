@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\auth\user\ApplyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FilesController;
@@ -69,7 +70,8 @@ Route::view('/', 'user.home')->name('home');
 // Route::view('/career/detail', 'user.detail');
 Route::get('/login', [LoginController::class, 'index'])->name('login.index');
 Route::post('/login', [LoginController::class, 'login'])->name('login.store');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'index'])->name('registrasi.index');
-// Route::post('/register', [RegisterController::class, 'register'])->name('register');
-// Route::post('/register/process/{section}', [RegisterController::class, 'processSection'])->name('register.process');
-Route::post('/register/process', [RegisterController::class, 'processRegistration'])->name('register.process');
+Route::post('/register', [RegisterController::class, 'register'])->name('register.process');
+Route::get('/apply/{slug_uuid}', [ApplyController::class, 'apply'])->name('apply');
+Route::get('/apply/process', [ApplyController::class, 'apply'])->name('apply.process');
