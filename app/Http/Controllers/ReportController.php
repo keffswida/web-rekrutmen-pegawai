@@ -85,13 +85,22 @@ class ReportController extends Controller
 
         // $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id');
 
-        if ($request->lowongan === null) {
-            $lowonganIds = Lowongan::pluck('id');
+        // if ($request->lowongan === null) {
+        //     $lowonganIds = Lowongan::pluck('id');
+        // } else {
+        //     $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id');
+        // }
+
+        if ($request->lowongan_id === null || $request->lowongan_id === 'all') {
+            // Ambil semua ID lowongan
+            $lowonganIds = Lowongan::pluck('id')->toArray();
         } else {
-            $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id');
+            // Ambil ID lowongan yang sesuai dengan posisi_id
+            $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id')->toArray();
         }
 
-        $pelamarQuery = Pelamar::whereIn('lowongan_id', $lowonganIds)
+        $pelamarQuery = Pelamar::with('user')
+            ->whereIn('lowongan_id', $lowonganIds)
             ->whereBetween('created_at', [$request->start_date, $request->end_date]);
         // ->get();
 
@@ -100,6 +109,14 @@ class ReportController extends Controller
         }
 
         $pelamar = $pelamarQuery->get();
+        // dd($pelamar);
+        // dd([
+        //     'lowongan_id_input' => $request->lowongan_id,
+        //     'lowonganIds' => $lowonganIds,
+        //     'query_sql' => $pelamarQuery->toSql(),
+        //     'query_bindings' => $pelamarQuery->getBindings(),
+        //     'pelamar_count' => $pelamarQuery->count(),
+        // ]);
 
         // dd(DB::getQueryLog());
 
