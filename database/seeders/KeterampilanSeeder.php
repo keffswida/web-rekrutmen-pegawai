@@ -13,6 +13,6 @@ class KeterampilanSeeder extends Seeder
      */
     public function run(): void
     {
-        Keterampilan::factory()->count(1)->create();
+        Keterampilan::factory()->count(10)->create();
     }
 }

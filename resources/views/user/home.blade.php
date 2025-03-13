@@ -44,7 +44,7 @@
             <p class="text-gray-600 text-base sm:text-lg md:text-xl my-4 font-inter">
                 Bersama kami, Anda dapat memberikan dampak positif bagi kehidupan pasien dan masyarakat.
             </p>
-            <a href="#"
+            <a href="/about"
                 class="btn btn-success inline-flex px-6 sm:px-10 py-3 text-sm sm:text-lg font-inter rounded-full gap-2 mt-2 transform transition duration-300 hover:scale-105 group">
                 About Us
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"

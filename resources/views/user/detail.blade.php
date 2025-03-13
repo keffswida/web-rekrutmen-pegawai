@@ -69,7 +69,7 @@
                         </div>
 
                         @if (Auth::check())
-                            <a href="{{ route('apply', ['slug' => $lowongan->slug, 'uuid' => $lowongan->uuid]) }}"
+                            <a href="{{ route('apply', ['slug_uuid' => $lowongan->slug . '_' . $lowongan->uuid]) }}"
                                 class="mt-6 flex items-center justify-center gap-2 w-full btn btn-success text-white font-semibold py-3 rounded-lg text-center transition duration-300 hover:scale-95">
                                 APPLY LOWONGAN
                                 <span

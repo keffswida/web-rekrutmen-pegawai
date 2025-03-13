@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
+use App\Models\Lamaran;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pelamar extends Authenticable
 
@@ -18,8 +20,8 @@ class Pelamar extends Authenticable
         'lowongan_id',
         // 'departemen_id',
         // 'posisi_id',
-        'nama_lengkap',
-        'nama_panggilan',
+        // 'nama_lengkap',
+        // 'nama_panggilan',
         'jenis_kelamin',
         'agama',
         'tempat_lahir',
@@ -27,15 +29,33 @@ class Pelamar extends Authenticable
         'status_kawin',
         'alamat',
         'no_telp',
-        'email',
-        'password',
+        // 'email',
+        // 'password',
         'profile',
         'cv',
+        'ktp',
+        'status_pelamaran',
+        'catatan',
+        'tgl_melamar',
     ];
 
     protected $casts = [
         'tgl_lahir' => 'date:d-m-Y'
     ];
+
+    public $attributes = [
+        'status_pelamaran' => 0,
+        'tgl_melamar' => null,
+    ];
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($pelamar) {
+            if (empty($pelamar->tgl_pelamar)) {
+                $pelamar->tgl_melamar = Carbon::now()->format('Y-m-d');
+            }
+        });
+    }
 
     public function user()
     {

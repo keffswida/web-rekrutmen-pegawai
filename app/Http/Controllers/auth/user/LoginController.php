@@ -32,27 +32,16 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email:dns',
             'password' => 'required'
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Debugging: Check if the user is authenticated
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Login successful',
-            //     'user' => Auth::guard('pelamar')->user()
-            // ]);
-
             return redirect()->intended('/career');
         }
-
-        // return response()->json([
-        //     'success' => false,
-        //     'message' => 'Login failed. Check email/password.'
-        // ]);
+        return back()->with('error', 'Login Gagal! Harap cobalagi');
     }
 
 

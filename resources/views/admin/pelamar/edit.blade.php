@@ -39,13 +39,15 @@
                             <label for="nama_lengkap" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama
                                 Lengkap</label>
                             <input id="nama_lengkap" type="text" name="nama_lengkap" class="form-input flex-1"
-                                value="{{ $pelamar->nama_lengkap }}" placeholder="Masukkan Nama Lengkap" required />
+                                value="{{ $pelamar->user->nama_lengkap }}" placeholder="Masukkan Nama Lengkap"
+                                required />
                         </div>
                         <div class="flex items-center mt-4">
                             <label for="nama_panggilan" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama
                                 Panggilan</label>
                             <input id="nama_panggilan" type="text" name="nama_panggilan" class="form-input flex-1"
-                                value="{{ $pelamar->nama_panggilan }}" placeholder="Masukkan Nama Panggilan" required />
+                                value="{{ $pelamar->user->nama_panggilan }}" placeholder="Masukkan Nama Panggilan"
+                                required />
                         </div>
                         <div class="flex items-center mt-4">
                             <label for="jenis_kelamin" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Jenis
@@ -119,13 +121,13 @@
                         <div class="flex items-center mt-4">
                             <label for="email" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Email</label>
                             <input id="email" type="email" name="email" class="form-input flex-1"
-                                value="{{ $pelamar->email }}" placeholder="Masukkan Email" required />
+                                value="{{ $pelamar->user->email }}" placeholder="Masukkan Email" required />
                         </div>
-                        <div class="flex items-center mt-4">
+                        {{-- <div class="flex items-center mt-4">
                             <label for="password" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Password</label>
                             <input id="password" type="password" name="password" class="form-input flex-1"
                                 value="{{ $pelamar->password }}" placeholder="Masukkan Password" required />
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -167,6 +169,26 @@
                                         <a href="{{ asset('storage/' . $pelamar->cv) }}" target="_blank"
                                             class="text-primary hover:underline">
                                             Lihat CV
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="ktp" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-2">Upload KTP
+                            Anda!</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input id="ktp" name="ktp" type="file"
+                                class="form-input flex file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary mb-3" />
+                            <div class="flex flex-col gap-2 w-1/2">
+                                @if (isset($pelamar->ktp))
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm">File saat
+                                            ini:</span>
+                                        <a href="{{ asset('storage/' . $pelamar->ktp) }}" target="_blank"
+                                            class="text-primary hover:underline">
+                                            Lihat KTP
                                         </a>
                                     </div>
                                 @endif

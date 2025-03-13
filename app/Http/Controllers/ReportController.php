@@ -18,7 +18,6 @@ class ReportController extends Controller
 
     public function filter(Request $request)
     {
-
         $request->merge([
             'start_date' => $request->start_date . ' 00:00:00',
             'end_date' => $request->end_date . ' 23:59:59',
@@ -58,24 +57,49 @@ class ReportController extends Controller
         // dd($pelamar);
 
         // DB::enableQueryLog();
+        // dd($request->all());
 
         $request->merge([
             'start_date' => $request->start_date . ' 00:00:00',
             'end_date' => $request->end_date . ' 23:59:59',
         ]);
 
+        if ($request->lowongan_id === 'all') {
+            $request->merge(['lowongan_id' => null]);
+        }
+
         $request->validate([
-            'lowongan_id' => 'required|exists:lowongan,id',
+            // 'lowongan_id' => 'nullable|exists:lowongan,posisi_id',
+            'lowongan_id' => 'nullable|exists:lowongan,posisi_id',
             'start_date' => 'required|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date_format:Y-m-d H:i:s|after_or_equal:start_date',
+            'status_pelamaran' => 'nullable|in:0,1,2,all'
         ]);
 
-        $pelamar = Pelamar::whereIn('lowongan_id', function ($query) use ($request) {
-            $query->select('id')
-                ->from('lowongan')
-                ->where('posisi_id', $request->lowongan_id)
-                ->whereBetween('created_at', [$request->start_date, $request->end_date]);
-        })->get();
+        // $pelamar = Pelamar::whereIn('lowongan_id', function ($query) use ($request) {
+        //     $query->select('id')
+        //         ->from('lowongan')
+        //         ->where('posisi_id', $request->lowongan_id)
+        //         ->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        // })->get();
+
+        // $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id');
+
+        if ($request->lowongan === null) {
+            $lowonganIds = Lowongan::pluck('id');
+        } else {
+            $lowonganIds = Lowongan::where('posisi_id', $request->lowongan_id)->pluck('id');
+        }
+
+        $pelamarQuery = Pelamar::whereIn('lowongan_id', $lowonganIds)
+            ->whereBetween('created_at', [$request->start_date, $request->end_date]);
+        // ->get();
+
+        if ($request->status_pelamaran !== null && $request->status_pelamaran !== 'all') {
+            $pelamarQuery->where('status_pelamaran', $request->status_pelamaran);
+        }
+
+        $pelamar = $pelamarQuery->get();
 
         // dd(DB::getQueryLog());
 

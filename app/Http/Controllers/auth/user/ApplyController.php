@@ -42,12 +42,14 @@ class ApplyController extends Controller
         DB::enableQueryLog();
 
         // Menemukan UUID dalam string menggunakan regex
-        if (preg_match('/([0-9a-fA-F-]{36})$/', $slug_uuid, $matches)) {
-            $uuid = $matches[1]; // UUID ditemukan
-            $slug = str_replace('-' . $uuid, '', $slug_uuid); // Menghapus UUID dari slug
-        } else {
-            return response()->json(['success' => false, 'message' => 'Format URL tidak valid.']);
-        }
+        // if (preg_match('/([0-9a-fA-F-]{36})$/', $slug_uuid, $matches)) {
+        //     $uuid = $matches[1]; // UUID ditemukan
+        //     $slug = str_replace('-' . $uuid, '', $slug_uuid); // Menghapus UUID dari slug
+        // } else {
+        //     return response()->json(['success' => false, 'message' => 'Format URL tidak valid.']);
+        // }
+
+        [$slug, $uuid] = explode('_', $slug_uuid, 2);
 
         // Debugging: Pastikan parsing slug dan uuid benar
         // dd($slug, $uuid, Lowongan::pluck('uuid')->toArray());
@@ -88,62 +90,88 @@ class ApplyController extends Controller
             } else {
                 $cvPath = null;
             }
+            if ($request->hasFile('ktp')) {
+                $ktpPath = $request->file('ktp')->store('ktps', 'public');
+            } else {
+                $ktpPath = null;
+            }
 
             $pelamar = $user->pelamar;
 
             $pelamar = Pelamar::create([
                 'user_id' => $user->id,
                 'lowongan_id' => $data['lowongan_id'],
-                'nama_lengkap' => $user->nama_lengkap,
-                'nama_panggilan' => $user->nama_panggilan,
+                // 'nama_lengkap' => $user->nama_lengkap,
+                // 'nama_panggilan' => $user->nama_panggilan,
                 'jenis_kelamin' => $data['jenis_kelamin'],
                 'agama' => $data['agama'],
                 'tempat_lahir' => $data['tempat_lahir'],
                 'tgl_lahir' => $data['tgl_lahir'],
                 'status_kawin' => $data['status_kawin'],
-                // 'email' => $data['email'],
-                // 'password' => Hash::make($data['password']),
+                // 'email' => $user->email,
+                // 'password' => Hash::make($user->password),
                 'no_telp' => $data['no_telp'],
                 'alamat' => $data['alamat'],
                 'profile' => $profilePath,
                 'cv' => $cvPath,
+                'ktp' => $ktpPath,
             ]);
 
-            if ($request->has('pendidikan')) {
-                foreach ($request->pendidikan as $pendidikan) {
-                    Pendidikan::create([
-                        'id_pelamar' => $pelamar->id,
-                        'nama_institusi' => $pendidikan['nama_institusi'],
-                        'jurusan' => $pendidikan['jurusan'],
-                        'gelar' => $pendidikan['gelar'],
-                        'tahun_masuk' => $pendidikan['tahun_masuk'],
-                        'tahun_lulus' => $pendidikan['tahun_lulus'],
-                        'deskripsi_sekolah' => $pendidikan['deskripsi_sekolah'],
-                    ]);
-                }
+            if (!$pelamar || !$pelamar->id) {
+                return response()->json(['error' => 'Pelamar tidak ditemukan'], 400);
             }
 
-            if ($request->has('pengalaman')) {
-                foreach ($request->pengalaman as $pengalaman) {
-                    Pengalaman::create([
-                        'id_pelamar' => $pelamar->id,
-                        'tempat_kerja' => $pengalaman['tempat_kerja'],
-                        'posisi_kerja' => $pengalaman['posisi_kerja'],
-                        'periode_kerja' => $pengalaman['periode_kerja'],
-                        'deksripsi_kerja' => $pengalaman['deksripsi_kerja'],
-                    ]);
-                }
+            // if ($request->has('nama_institusi')) {
+            // foreach ($request->pendidikan as $pendidikan) {
+            foreach ($request->nama_institusi as $index => $namaInstitusi) {
+                Pendidikan::create([
+                    // 'id_pelamar' => $pelamar->id,
+                    // 'nama_institusi' => $pendidikan['nama_institusi'],
+                    // 'jurusan' => $pendidikan['jurusan'],
+                    // 'gelar' => $pendidikan['gelar'],
+                    // 'tahun_masuk' => $pendidikan['tahun_masuk'],
+                    // 'tahun_lulus' => $pendidikan['tahun_lulus'],
+                    // 'deskripsi_sekolah' => $pendidikan['deskripsi_sekolah'],
+                    'id_pelamar' => $pelamar->id,
+                    'nama_institusi' => $namaInstitusi,
+                    'jurusan' => $request->jurusan[$index],
+                    'gelar' => $request->gelar[$index],
+                    'tahun_masuk' => $request->tahun_masuk[$index],
+                    'tahun_lulus' => $request->tahun_lulus[$index],
+                    'deskripsi_sekolah' => $request->deskripsi_sekolah[$index] ?? null,
+                ]);
             }
+            // }
 
-            if ($request->has('keterampilan')) {
-                foreach ($request->keterampilan as $keterampilan) {
-                    Keterampilan::create([
-                        'id_pelamar' => $pelamar->id,
-                        'bidang_keterampilan' => $keterampilan['bidang_keterampilan'],
-                        'keterampilan_terkait' => $keterampilan['keterampilan_terkait'],
-                    ]);
-                }
+            // if ($request->has('pengalaman')) {
+            foreach ($request->tempat_kerja as $index => $tempatKerja) {
+                Pengalaman::create([
+                    // 'id_pelamar' => $pelamar->id,
+                    // 'tempat_kerja' => $pengalaman['tempat_kerja'],
+                    // 'posisi_kerja' => $pengalaman['posisi_kerja'],
+                    // 'periode_kerja' => $pengalaman['periode_kerja'],
+                    // 'deskripsi_kerja' => $pengalaman['deskripsi_kerja'],
+                    'id_pelamar' => $pelamar->id,
+                    'tempat_kerja' => $tempatKerja,
+                    'posisi_kerja' => $request->posisi_kerja[$index],
+                    'periode_kerja' => $request->periode_kerja[$index],
+                    'deskripsi_kerja' => $request->deskripsi_kerja[$index],
+                ]);
             }
+            // }
+
+            // if ($request->has('keterampilan')) {
+            foreach ($request->bidang_keterampilan as $index => $bidangKeterampilan) {
+                Keterampilan::create([
+                    // 'id_pelamar' => $pelamar->id,
+                    // 'bidang_keterampilan' => $keterampilan['bidang_keterampilan'],
+                    // 'keterampilan_terkait' => $keterampilan['keterampilan_terkait'],
+                    'id_pelamar' => $pelamar->id,
+                    'bidang_keterampilan' => $bidangKeterampilan,
+                    'keterampilan_terkait' => $request->keterampilan_terkait[$index],
+                ]);
+            }
+            // }
 
             if ($request->hasFile('ijazah_terakhir')) {
                 $ijazahPath = $request->file('ijazah_terakhir')->store('ijazah', 'public');

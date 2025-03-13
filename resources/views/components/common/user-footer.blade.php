@@ -12,7 +12,7 @@
             <div>
                 <h2 class="text-lg md:text-xl font-light mb-4">QUICK MENU</h2>
                 <ul class="space-y-2">
-                    <li><a href="#" class="hover:text-green-400">Tentang Kami</a></li>
+                    <li><a href="/about" class="hover:text-green-400">Tentang Kami</a></li>
                     <li><a href="/career" class="hover:text-green-400">Cari Lowongan</a></li>
                 </ul>
             </div>

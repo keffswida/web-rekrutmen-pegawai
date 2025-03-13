@@ -31,18 +31,20 @@
                     class="bg-white rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105">
                     <div class="p-4">
                         @if (!empty($l->brosur))
-                            <img src="{{ Storage::url($l->brosur) }}" alt="Brosur Lowongan"
-                                class="w-auto h-auto object-cover rounded-t-lg">
+                            <a href="{{ route('career.show', $l->id) }}">
+                                <img src="{{ Storage::url($l->brosur) }}" alt="Brosur Lowongan"
+                                    class="w-auto h-auto object-cover rounded-t-lg">
+                            </a>
                         @else
                             <p>Tidak ada brosur</p>
                         @endif
                         <div class="p-4">
                             <a href="{{ route('career.show', $l->id) }}"
-                                class="text-green-500 hover:text-green-700 font-semibold text-lg mb-5 font-inter">
+                                class="text-green-500 hover:text-green-700 font-semibold text-lg mb-5 font-inter transtion duration-300">
                                 {{ $l->posisi->nama_posisi }}
                             </a>
                             <p class="text-gray-600 text-sm mb-4 font-poppins">
-                                {{ $l->deskripsi }}
+                                {{ \Illuminate\Support\Str::words($l->deskripsi ?? '-', 10, ' ...') }}
                             </p>
                             {{-- <a href="{{ route('lowongan.show', $job->id) }}" --}}
                             <a href="{{ route('career.show', $l->id) }}"

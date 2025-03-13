@@ -129,24 +129,38 @@
             <table>
                 <thead>
                     <tr>
+                        <th>No</th>
                         <th>Nama Lengkap</th>
                         <th>Nama Panggilan</th>
                         <th>Jenis Kelamin</th>
                         <th>Email</th>
                         <th>No. Telp</th>
                         <th>Alamat</th>
+                        <th>Status Pelamaran</th>
                         <th>Lowongan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($pelamar as $data)
                         <tr>
-                            <td>{{ $data->nama_lengkap }}</td>
-                            <td>{{ $data->nama_panggilan }}</td>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $data->user->nama_lengkap }}</td>
+                            <td>{{ $data->user->nama_panggilan }}</td>
                             <td>{{ $data->jenis_kelamin == 0 ? 'Laki-laki' : 'Perempuan' }}</td>
-                            <td>{{ $data->email }}</td>
+                            <td>{{ $data->user->email }}</td>
                             <td>{{ $data->no_telp }}</td>
                             <td>{{ $data->alamat }}</td>
+                            <td>
+                                @if ($data->status_pelamaran == 0)
+                                    Pengajuan
+                                @elseif($data->status_pelamaran == 1)
+                                    Proses Lanjut
+                                @elseif($data->status_pelamaran == 2)
+                                    Ditolak
+                                @else
+                                    Tidak Diketahui
+                                @endif
+                            </td>
                             <td>{{ $data->lowongan->posisi->nama_posisi ?? 'N/A' }}</td>
                         </tr>
                     @endforeach

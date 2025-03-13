@@ -111,20 +111,22 @@
                     agama: '',
                     tempat_lahir: '',
                     tgl_lahir: '',
+                    no_telp: '',
                     email: '{{ $user->email }}',
                     password: '{{ $user->password }}',
-                    no_telp: '',
                     alamat: '',
+                    status_kawin: '',
                     pendidikanRows: [{}],
                     pengalamanKerjaRows: [{}],
                     keterampilanRows: [{}],
                     profile: null,
                     cv: null,
+                    ktp: null,
                     ijazah_terakhir: null,
                     transkripNilai: null,
                     certificates: [{}],
                 }">
-                    <form id="registerForm" enctype="multipart/form-data">
+                    <form id="applyForm" enctype="multipart/form-data">
                         <!-- Data Diri -->
                         <div x-show="activeTab === 1">
                             <div class="isolate bg-white px-6 py-10 sm:py-8 lg:px-8">
@@ -132,6 +134,8 @@
                                     Data Diri
                                     <span class="block mt-2 w-20 h-1 bg-green-400 mx-auto rounded-full"></span>
                                 </h1>
+
+                                <input type="hidden" name="user_id" value="{{ Auth::user()->id }}">
 
                                 <div class="border rounded-lg p-4 bg-gray-50">
                                     <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -159,10 +163,15 @@
                                                 class="text-sm/6 font-semibold text-gray-900">Nama
                                                 Lengkap</label>
                                             <div class="mt-2.5">
-                                                <input type="text" id="nama_lengkap" x-model="nama_lengkap"
-                                                    placeholder="Nama Lengkap..." value="{{ $user->nama_lengkap }}"
-                                                    disabled
+                                                <input type="text" name="nama_lengkap" id="nama_lengkap"
+                                                    x-model="nama_lengkap" value="{{ Auth::user()->nama_lengkap }}"
+                                                    readonly
                                                     class="block w-full form-input rounded-md bg-white px-3.5 py-2">
+                                                {{-- <input type="text" id="nama_lengkap" x-model="nama_lengkap"
+                                                    value="{{ Auth::user()->nama_lengkap }}" readonly
+                                                    class="block w-full form-input rounded-md bg-white px-3.5 py-2"> --}}
+                                                {{-- <input type="hidden" name="nama_lengkap" x-model="nama_lengkap"
+                                                    value="{{ Auth::user()->nama_lengkap }}"> --}}
                                             </div>
                                         </div>
                                         <div>
@@ -170,10 +179,15 @@
                                                 class="text-sm/6 font-semibold text-gray-900">Nama
                                                 Panggilan</label>
                                             <div class="mt-2.5">
-                                                <input type="text" id="nama_panggilan" x-model="nama_panggilan"
-                                                    placeholder="Nama Panggilan..."
-                                                    value="{{ $user->nama_panggilan }}" disabled
+                                                <input type="text" name="nama_panggilan" id="nama_panggilan"
+                                                    x-model="nama_panggilan"
+                                                    value="{{ Auth::user()->nama_panggilan }}" readonly
                                                     class="block w-full form-input rounded-md bg-white px-3.5 py-2">
+                                                {{-- <input type="text" id="nama_panggilan" x-model="nama_panggilan"
+                                                    value="{{ Auth::user()->nama_panggilan }}" readonly
+                                                    class="block w-full form-input rounded-md bg-white px-3.5 py-2"> --}}
+                                                {{-- <input type="hidden" name="nama_panggilan" x-model="nama_panggilan"
+                                                    value="{{ Auth::user()->nama_panggilan }}"> --}}
                                             </div>
                                         </div>
                                         <div class="sm:col-span-2">
@@ -238,19 +252,22 @@
                                             <label for="email"
                                                 class="block text-sm/6 font-semibold text-gray-900">Email</label>
                                             <div class="mt-2.5">
-                                                <input type="email" id="email" x-model="email"
-                                                    autocomplete="email" placeholder="example@example.com"
-                                                    value="{{ $user->email }}" disabled
+                                                <input type="email" name="email" id="email" x-model="email"
+                                                    autocomplete="email" value="{{ Auth::user()->email }}" readonly
                                                     class="block w-full form-input rounded-md bg-white px-3.5 py-2">
+                                                {{-- <input type="email" id="email" x-model="email"
+                                                    value="{{ Auth::user()->email }}" readonly
+                                                    class="block w-full form-input rounded-md bg-white px-3.5 py-2"> --}}
+                                                {{-- <input type="hidden" name="email" x-model="email"
+                                                    value="{{ Auth::user()->email }}"> --}}
                                             </div>
                                         </div>
                                         <div>
                                             <label for="password"
                                                 class="block text-sm/6 font-semibold text-gray-900">Password</label>
                                             <div class="mt-2.5">
-                                                <input type="password" id="password" x-model="password"
-                                                    placeholder="**************" value="{{ $user->password }}"
-                                                    disabled
+                                                <input type="password" name="password" id="password"
+                                                    x-model="password" value="{{ Auth::user()->password }}" readonly
                                                     class="block form-input w-full rounded-md bg-white px-3.5 py-2">
                                             </div>
                                         </div>
@@ -290,6 +307,17 @@
                                                     @change="cv = $event.target.files[0]"
                                                     class="block w-full form-input rounded-md bg-white px-3.5 py-2">
                                                 <p class="mt-1" x-text="cv ? 'Terupload' : 'Belum Terupload'"></p>
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label for="ktp" class="text-sm/6 font-semibold text-gray-900">Foto
+                                                KTP</label>
+                                            <div class="mt-2.5">
+                                                <input type="file" name="ktp" id="ktp"
+                                                    @change="ktp = $event.target.files[0]"
+                                                    class="block w-full form-input rounded-md bg-white px-3.5 py-2">
+                                                <p class="mt-1" x-text="ktp ? 'Terupload' : 'Belum Terupload'">
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -538,14 +566,11 @@
                                 </h1>
                                 <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                                     <div class="sm:col-span-2">
-
-                                        <!-- Education form with dynamic rows -->
-                                        {{-- <div x-data="{ keterampilanRows: [{}] }" class="space-y-4"> --}}
                                         <div class="space-y-4">
                                             <template x-for="(row, index) in keterampilanRows" :key="index">
                                                 <div class="border rounded-lg p-4 bg-gray-50">
-                                                    <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                                                        <div class="sm:col-span-2">
+                                                    <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-4">
+                                                        <div class="sm:col-span-4">
                                                             <label :for="'bidang_keterampilan_' + index"
                                                                 class="text-sm/6 font-semibold text-gray-900">Bidang
                                                                 Keterampilan</label>
@@ -558,7 +583,7 @@
                                                                     class="block w-full form-input rounded-md bg-white px-3.5 py-2">
                                                             </div>
                                                         </div>
-                                                        <div class="sm:col-span-2">
+                                                        <div class="sm:col-span-4">
                                                             <label :for="'keterampilan_terkait_' + index"
                                                                 class="text-sm/6 font-semibold text-gray-900">Keterampilan
                                                                 Terkait</label>
@@ -603,6 +628,7 @@
                                                 </button>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -745,12 +771,15 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-gray-500">Jenis Kelamin</p>
-                                            <p class="mt-1" x-text="jenis_kelamin || '-'">
+                                            {{-- <p class="mt-1" x-text="jenis_kelamin || '-'"> --}}
+                                            <p class="mt-1"
+                                                x-text="jenis_kelamin === '0' ? 'Laki-laki' : jenis_kelamin === '1' ? 'Perempuan' : '-'">
                                             </p>
                                         </div>
                                         <div>
                                             <p class="text-sm font-medium text-gray-500">Agama</p>
-                                            <p class="mt-1" x-text="agama || '-'">
+                                            <p class="mt-1"
+                                                x-text="agama === '0' ? 'Islam' : agama === '1' ? 'Kristen' : agama === '2' ? 'Katolik' : agama === '3' ? 'Hindu' : agama === '4' ? 'Buddha' : agama === '5' ? 'Konghucu' : '-'">
                                             </p>
                                         </div>
                                         <div>
@@ -768,11 +797,11 @@
                                             <p class="mt-1" x-text="email || '-'">
                                             </p>
                                         </div>
-                                        <div>
+                                        {{-- <div>
                                             <p class="text-sm font-medium text-gray-500">Password</p>
                                             <p class="mt-1" x-text="password || '-'">
                                             </p>
-                                        </div>
+                                        </div> --}}
                                         <div>
                                             <p class="text-sm font-medium text-gray-500">No. Telp</p>
                                             <p class="mt-1" x-text="no_telp || '-'">
@@ -807,7 +836,8 @@
                                                 </div>
                                                 <div>
                                                     <p class="text-sm font-medium text-gray-500">Gelar</p>
-                                                    <p class="mt-1" x-text="education.gelar || '-'">
+                                                    <p class="mt-1"
+                                                        x-text="education.gelar === '0' ? 'SMA' : education.gelar === '1' ? 'SMK' : education.gelar === '2' ? 'D3' : education.gelar === '3' ? 'D4' : education.gelar === '4' ? 'S1' : education.gelar === '5' ? 'S2' : '-'">
                                                     </p>
                                                 </div>
                                                 <div>
@@ -863,14 +893,48 @@
                                     </template>
                                 </div>
 
+                                <!-- Keterampilan Summary -->
+                                <div class="border rounded-lg p-6 bg-gray-50 mb-6">
+                                    <h2 class="text-lg font-semibold mb-4 text-gray-900 border-b pb-2">Keterampilan
+                                    </h2>
+                                    <template x-for="(skill, index) in keterampilanRows">
+                                        <div class="mb-4 pb-4 border-b last:border-b-0">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div class="md:col-span-2">
+                                                    <p class="text-sm font-medium text-gray-500">Bidang Keterampilan
+                                                    </p>
+                                                    <p class="mt-1" x-text="skill.bidang_keterampilan || '-'">
+                                                    </p>
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <p class="text-sm font-medium text-gray-500">Keterampilan Terkait
+                                                    </p>
+                                                    <p class="mt-1" x-text="skill.keterampilan_terkait || '-'">
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
                                 <!-- Document Summary -->
                                 <div class="border rounded-lg p-6 bg-gray-50 mb-6">
                                     <h2 class="text-lg font-semibold mb-4 text-gray-900 border-b pb-2">Dokumen yang
                                         Diupload</h2>
                                     <div class="space-y-4">
                                         <div>
+                                            <p class="text-sm font-medium text-gray-500">Profile</p>
+                                            <p class="mt-1" x-text="profile ? profile.name : 'Belum Terupload'">
+                                            </p>
+                                        </div>
+                                        <div>
                                             <p class="text-sm font-medium text-gray-500">CV</p>
                                             <p class="mt-1" x-text="cv ? cv.name : 'Belum Terupload'">
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">Foto KTP</p>
+                                            <p class="mt-1" x-text="ktp ? ktp.name : 'Belum Terupload'">
                                             </p>
                                         </div>
                                         <div>
@@ -923,7 +987,7 @@
                                         </label>
                                     </div>
                                     <div class="flex justify-center">
-                                        <button type="button" id="submitRegistration"
+                                        <button type="button" id="submitApply"
                                             class="btn bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md">
                                             Submit Lamaran
                                         </button>
@@ -960,8 +1024,8 @@
     </div>
 
     <script>
-        document.getElementById("submitRegistration").addEventListener("click", function() {
-            let form = document.getElementById("registerForm");
+        document.getElementById("submitApply").addEventListener("click", function() {
+            let form = document.getElementById("applyForm");
             let formData = new FormData(form);
 
             document.querySelectorAll('input[type="file"]').forEach(input => {
@@ -970,7 +1034,7 @@
                 }
             });
 
-            fetch("{{ route('register.process') }}", {
+            fetch("{{ route('apply.process') }}", {
                     method: "POST",
                     body: formData,
                     headers: {
@@ -982,7 +1046,7 @@
                 .then(data => {
                     if (data.success) {
                         alert("Pendaftaran Berhasil!");
-                        window.location.href = 'login';
+                        window.location.href = '/career';
                     } else {
                         alert("Gagal menyimpan data!");
                     }

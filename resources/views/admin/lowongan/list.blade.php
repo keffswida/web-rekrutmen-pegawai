@@ -457,8 +457,8 @@
                     this.datatable = new simpleDatatables.DataTable('#list_low', {
                         sortable: true,
                         searchable: true,
-                        perPage: 10,
-                        perPageSelect: [10, 20, 30, 50, 100],
+                        perPage: 5,
+                        perPageSelect: [5, 10, 25, 50, 100],
                         labels: {
                             perPage: "{select}"
                         },

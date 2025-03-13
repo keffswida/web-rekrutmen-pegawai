@@ -12,6 +12,7 @@ use App\Models\Pengalaman;
 use App\Models\Sertifikat;
 use App\Models\Keterampilan;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -37,9 +38,11 @@ class PelamarController extends Controller
         try {
             $lowongan = $request->query('lowongan');
             $gelar = $request->query('gelar');
-            $user = $request->query('email');
+            $email = $request->query('email');
+            $namaLengkap = $request->query('nama_lengkap');
+            $namaPanggilan = $request->query('nama_panggilan');
 
-            $pelamars = Pelamar::with(['lowongan', 'departemen', 'posisi', 'pendidikan'])
+            $pelamars = Pelamar::with(['lowongan', 'departemen', 'posisi', 'pendidikan', 'user'])
                 ->when(!empty($lowongan) && (int) $lowongan > 0, function ($query) use ($lowongan) {
                     $query->where('lowongan_id', $lowongan);
                 })
@@ -48,11 +51,16 @@ class PelamarController extends Controller
                         $subQuery->where('gelar', $gelar);
                     });
                 })
-                ->when(!empty($user) && (int) $user > 0, function ($query) use ($user) {
-                    $query->where('user_id', $user);
-                })
                 ->orderBy('created_at', 'desc')
                 ->get();
+
+            $uniquePosisi = Lowongan::with('posisi')
+                ->get()
+                ->groupBy('posisi.id')
+                ->map(function ($items) {
+                    return $items->first();
+                })
+                ->values();
 
             $gelarList = [
                 0 => 'SMA',
@@ -63,24 +71,38 @@ class PelamarController extends Controller
                 5 => 'S2',
             ];
 
-            $datas = $pelamars->map(function ($pelamar) use ($gelarList) {
+            $statusPelamarList = [
+                0 => '<span class="badge bg-warning rounded-full">Pengajuan</span>',
+                1 => '<span class="badge bg-success rounded-full">Proses Lanjut</span>',
+                2 => '<span class="badge bg-danger rounded-full">Ditolak</span>',
+            ];
+
+            $datas = $pelamars->map(function ($pelamar) use ($gelarList, $statusPelamarList) {
                 $gelarCode = optional($pelamar->pendidikan->first())->gelar;
 
                 return [
                     'id' => $pelamar->id,
-                    'nama_lengkap' => $pelamar->nama_lengkap,
-                    'nama_panggilan' => $pelamar->nama_panggilan,
+                    'nama_lengkap' => optional($pelamar->user)->nama_lengkap,
+                    'nama_panggilan' => optional($pelamar->user)->nama_panggilan,
                     'no_telp' => $pelamar->no_telp,
-                    'email' => $pelamar->email,
+                    'email' => optional($pelamar->user)->email,
                     'alamat' => $pelamar->alamat,
                     'lowongan' => optional($pelamar->lowongan->posisi)->nama_posisi ?? 'Tidak ada',
                     'gelar' => isset($gelarCode) && array_key_exists($gelarCode, $gelarList) ? $gelarList[$gelarCode] : 'Tidak diketahui',
+                    'tgl_melamar' => Carbon::parse($pelamar->tgl_melamar)->translatedFormat('d F Y'),
+                    'status_pelamaran' => $statusPelamarList[(int) $pelamar->status_pelamaran] ?? '<span class="badge bg-warning rounded-full">Pengajuan</span>',
                 ];
             });
 
             return response()->json([
                 'success' => true,
                 'data' => $datas,
+                'filter_lowongan' => $uniquePosisi->map(function ($lowongan) {
+                    return [
+                        'id' => $lowongan->id,
+                        'posisi' => $lowongan->posisi->nama_posisi ?? 'Tidak ada',
+                    ];
+                })
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -124,9 +146,12 @@ class PelamarController extends Controller
             'password' => 'required|min:8',
             'profile' => 'required|file|mimes:png,jpg,jpeg',
             'cv' => 'required|file|mimes:png,jpg,jpeg,pdf',
+            'ktp' => 'required|file|mimes:png,jpg,jpeg',
             'departemen_id' => 'nullable|exists:departemen,id',
             'posisi_id' => 'nullable|exists:posisi,id',
         ]);
+
+        $tglMelamar = Carbon::now()->format('Y-m-d');
 
         // dd($validatedData);
 
@@ -138,6 +163,10 @@ class PelamarController extends Controller
         $cvPath = null;
         if ($request->hasFile('cv')) {
             $cvPath = $request->file('cv')->store('cvs', 'public');
+        }
+        $ktpPath = null;
+        if ($request->hasFile('ktp')) {
+            $ktpPath = $request->file('ktp')->store('ktps', 'public');
         }
 
         $pelamar = Pelamar::create([
@@ -157,6 +186,9 @@ class PelamarController extends Controller
             'password' => $validatedData['password'],
             'profile' => $profilePath,
             'cv' => $cvPath,
+            'ktp' => $ktpPath,
+            'tgl_melamar' => $tglMelamar,
+            'status_pelamaran' => 0,
         ]);
 
         return redirect()->route('pelamar.index')->with('success', 'Pelamar berhasil ditambahkan!');
@@ -231,9 +263,14 @@ class PelamarController extends Controller
             'password' => 'required|min:8',
             'profile' => 'nullable|file|mimes:png,jpg,jpeg',
             'cv' => 'nullable|file|mimes:png,jpg,jpeg,pdf',
+            'ktp' => 'nullable|file|mimes:png,jpg,jpeg',
             'departemen_id' => 'nullable|exists:departemen,id',
             'posisi_id' => 'nullable|exists:posisi,id',
+            'status_pelamaran' => 'required|in:0,1,2',
+            'catatan' => 'nullable|string',
         ]);
+
+        unset($validatedData['tgl_melamar']);
 
         if ($request->hasFile('profile')) {
             if ($pelamar->profile) {
@@ -264,6 +301,20 @@ class PelamarController extends Controller
         } else {
             unset($validatedData['cv']);
         }
+        if ($request->hasFile('ktp')) {
+            if ($pelamar->ktp) {
+                Storage::disk('public')->delete($pelamar->ktp);
+
+                $folderKTP = dirname($pelamar->ktp);
+            } else {
+                $folderKTP = '/ktps';
+            }
+
+            $ktpPath = $request->file('ktp')->store($folderKTP, 'public');
+            $validatedData['ktp'] = $ktpPath;
+        } else {
+            unset($validatedData['ktp']);
+        }
 
         if ($request->filled('password')) {
             $validatedData['password'] = Hash::make($validatedData['password']);
@@ -287,6 +338,10 @@ class PelamarController extends Controller
 
         if ($pelamar->cv) {
             Storage::disk('public')->delete($pelamar->cv);
+        }
+
+        if ($pelamar->ktp) {
+            Storage::disk('public')->delete($pelamar->ktp);
         }
 
         $pelamar->delete();

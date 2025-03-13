@@ -5,7 +5,7 @@
     <div x-data="listDetailPelamar">
         <div class="panel mt-6">
             <div class="flex items-center justify-between mb-4">
-                <h5 class="font-semibold text-2xl dark:text-white-light font-sans">{{ $pelamar->nama_lengkap }}
+                <h5 class="font-semibold text-2xl dark:text-white-light font-sans">{{ $pelamar->user->nama_lengkap }}
                 </h5>
 
                 <div class="flex items-center justify-end">
@@ -159,7 +159,7 @@
                                         </div>
                                         <div class="space-y-2">
                                             <h3 class="font-semibold text-lg text-center">
-                                                {{ $pelamar->nama_lengkap }}</h3>
+                                                {{ $pelamar->user->nama_lengkap }}</h3>
                                             <p class="text-gray-500 text-center">
                                                 {{ $pelamar->lowongan->posisi->nama_posisi }}
                                             </p>
@@ -178,7 +178,7 @@
                                                         Nama Lengkap</p>
                                                     <p
                                                         class="mt-1 w-full break-words whitespace-normal overflow-wrap anywhere">
-                                                        {{ $pelamar->nama_lengkap }}
+                                                        {{ $pelamar->user->nama_lengkap }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -186,7 +186,7 @@
                                                         Nama Panggilan</p>
                                                     <p
                                                         class="mt-1 w-full break-words whitespace-normal overflow-wrap anywhere">
-                                                        {{ $pelamar->nama_panggilan }}
+                                                        {{ $pelamar->user->nama_panggilan }}
                                                     </p>
                                                 </div>
                                                 <div>
@@ -345,6 +345,24 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- KTP Section -->
+                            <div class="mt-8">
+                                <div class="panel p-6">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-lg font-semibold">Kartu Tanda Penduduk (KTP)</h3>
+                                        <a href="{{ asset('storage/' . $pelamar->ktp) }}" target="_blank"
+                                            class="text-primary hover:underline flex items-center gap-2">
+                                            <span>Lihat KTP </span>
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div x-show="tab === 'pendidikan'">
@@ -395,7 +413,7 @@
                                                                 Pelamar</label>
                                                             <input type="text" name="nama_lengkap"
                                                                 id="nama_lengkap"
-                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                 class="form-input" disabled>
                                                         </div>
 
@@ -541,7 +559,7 @@
                                                                                 Pelamar</label>
                                                                             <input type="text" name="nama_lengkap"
                                                                                 id="nama_lengkap"
-                                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                                 class="form-input" disabled>
                                                                         </div>
 
@@ -743,7 +761,7 @@
                                                                 Pelamar</label>
                                                             <input type="text" name="nama_lengkap"
                                                                 id="nama_lengkap"
-                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                 class="form-input" disabled>
                                                         </div>
 
@@ -863,7 +881,7 @@
                                                                                 Pelamar</label>
                                                                             <input type="text" name="nama_lengkap"
                                                                                 id="nama_lengkap"
-                                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                                 class="form-input" disabled>
                                                                         </div>
 
@@ -1004,7 +1022,7 @@
                                                                 Pelamar</label>
                                                             <input type="text" name="nama_lengkap"
                                                                 id="nama_lengkap"
-                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                 class="form-input" disabled>
                                                         </div>
 
@@ -1105,7 +1123,7 @@
                                                                                 Pelamar</label>
                                                                             <input type="text" name="nama_lengkap"
                                                                                 id="nama_lengkap"
-                                                                                value="{{ $pelamar->nama_lengkap }}"
+                                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                                 class="form-input" disabled>
                                                                         </div>
 
@@ -1332,7 +1350,7 @@
                                                                             <label class="form-label">Nama
                                                                                 Pelamar</label>
                                                                             <input type="text"
-                                                                                value="{{ $sertifikat->pelamar->nama_lengkap }}"
+                                                                                value="{{ $pelamar->user->nama_lengkap }}"
                                                                                 class="form-input" disabled>
                                                                         </div>
                                                                         <!-- Sertifikat -->
@@ -1343,7 +1361,8 @@
                                                                                 <label for="sertifikat"
                                                                                     class="form-label">Sertifikat</label>
                                                                                 <input type="text"
-                                                                                    name="sertifikat" id="sertifikat"
+                                                                                    name="sertifikat"
+                                                                                    id="sertifikat"
                                                                                     class="form-input"
                                                                                     value="{{ $sertifikat->sertifikat }}"
                                                                                     required>
@@ -1481,7 +1500,8 @@
                                                         <label for="nama_lengkap" class="form-label">Nama
                                                             Pelamar</label>
                                                         <input type="text" name="nama_lengkap"
-                                                            id="nama_lengkap" value="{{ $pelamar->nama_lengkap }}"
+                                                            id="nama_lengkap"
+                                                            value="{{ $pelamar->user->nama_lengkap }}"
                                                             class="form-input" disabled>
                                                     </div>
 
@@ -1589,7 +1609,7 @@
                                                                             Pelamar</label>
                                                                         <input type="text" name="nama_lengkap"
                                                                             id="nama_lengkap"
-                                                                            value="{{ $pelamar->nama_lengkap }}"
+                                                                            value="{{ $pelamar->user->nama_lengkap }}"
                                                                             class="form-input" disabled>
                                                                     </div>
 

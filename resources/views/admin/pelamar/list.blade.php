@@ -20,25 +20,29 @@
                 </a> --}}
             </div>
             {{-- <div class="flex"> --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                    <select name="lowongan" id="filter-lowongan" class="form-select">
-                        <option value="0">Semua</option>
-                        @foreach ($pelamar as $p)
-                            <option value="{{ $p->lowongan_id }}">{{ $p->lowongan->posisi->nama_posisi }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <select name="gelar" id="filter-gelar" class="form-select">
-                        <option value="-1">Semua</option>
-                        <option value="0">SMA</option>
-                        <option value="1">SMK</option>
-                        <option value="2">D3</option>
-                        <option value="3">D4</option>
-                        <option value="4">S1</option>
-                        <option value="5">S2</option>
-                    </select>
+            <div class="flex justify-between lg:flex-row flex-col gap-4 mb-4">
+                <div class="lg:w-1/2 w-full">
+                    <div class="flex items-center mt-4">
+                        <label for="lowongan" class="w-1/2">Lowongan</label>
+                        <select name="lowongan" id="filter-lowongan" class="form-select">
+                            <option value="0">Semua</option>
+                            @foreach ($lowongan as $low)
+                                <option value="{{ $low->id }}">{{ $low->posisi->nama_posisi }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex items-center mt-4">
+                        <label for="gelar" class="w-1/2">Gelar</label>
+                        <select name="gelar" id="filter-gelar" class="form-select">
+                            <option value="-1">Semua</option>
+                            <option value="0">SMA</option>
+                            <option value="1">SMK</option>
+                            <option value="2">D3</option>
+                            <option value="3">D4</option>
+                            <option value="4">S1</option>
+                            <option value="5">S2</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             {{-- </div> --}}
@@ -48,11 +52,12 @@
                         <th>No</th>
                         <th class="text-center">Aksi</th>
                         <th>Lowongan</th>
+                        <th>Status Pelamaran</th>
+                        <th>Tgl. Melamar</th>
                         <th>Nama Lengkap</th>
                         <th>Nama Panggilan</th>
                         <th>Gelar</th>
                         <th>No. Telepon</th>
-                        {{-- <th>Email</th> --}}
                         <th>Alamat</th>
                     </tr>
                 </thead>
@@ -60,7 +65,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
     <!-- Add Row and Delete Row Script -->
@@ -107,7 +111,8 @@
 
                     dataTable = new simpleDatatables.DataTable("#list_pelamar", {
                         data: {
-                            headings: ['No', 'Aksi', 'Lowongan', 'Nama Lengkap', 'Nama Panggilan', 'Gelar',
+                            headings: ['No', 'Aksi', 'Lowongan', 'Status Pelamaran', 'Tgl. Melamar',
+                                'Nama Lengkap', 'Nama Panggilan', 'Gelar',
                                 'Email', 'No. Telp', 'Alamat'
                             ],
                             data: responseData.data.map((item, index) => [
@@ -162,12 +167,14 @@
                                     </form>
                                 </div>`,
                                 item.lowongan,
+                                item.status_pelamaran,
+                                item.tgl_melamar,
                                 item.nama_lengkap,
                                 item.nama_panggilan,
                                 item.gelar,
                                 item.email,
                                 item.no_telp,
-                                item.alamat
+                                item.alamat,
                             ])
                         },
                         sortable: true,

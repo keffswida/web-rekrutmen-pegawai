@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -17,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('lowongan_id');
             $table->unsignedBigInteger('departemen_id')->nullable();
             $table->unsignedBigInteger('posisi_id')->nullable();
-            $table->string('nama_lengkap');
-            $table->string('nama_panggilan');
+            // $table->string('nama_lengkap');
+            // $table->string('nama_panggilan');
             $table->enum('jenis_kelamin', ['0', '1']);
             $table->enum('agama', ['0', '1', '2', '3', '4', '5']);
             $table->string('tempat_lahir');
@@ -26,10 +27,14 @@ return new class extends Migration
             $table->enum('status_kawin', ['0', '1']);
             $table->string('alamat');
             $table->string('no_telp');
-            $table->string('email');
-            $table->string('password');
+            // $table->string('email');
+            // $table->string('password');
             $table->string('profile');
             $table->string('cv');
+            $table->string('ktp');
+            $table->integer('status_pelamaran')->default(0);
+            $table->text('catatan')->nullable();
+            $table->string('tgl_melamar')->default(DB::raw('CURRENT_DATE'));
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -13,6 +13,6 @@ class PengalamanSeeder extends Seeder
      */
     public function run(): void
     {
-        Pengalaman::factory()->count(1)->create();
+        Pengalaman::factory()->count(10)->create();
     }
 }
