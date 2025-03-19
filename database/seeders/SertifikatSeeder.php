@@ -13,6 +13,6 @@ class SertifikatSeeder extends Seeder
      */
     public function run(): void
     {
-        Sertifikat::factory()->count(10)->create();
+        Sertifikat::factory()->count(9)->create();
     }
 }

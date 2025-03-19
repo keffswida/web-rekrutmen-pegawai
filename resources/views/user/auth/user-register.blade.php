@@ -51,8 +51,8 @@
 
                     <div>
                         <button type="submit"
-                            class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs transform transition duration-300 hover:scale-105 hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Log
-                            in</button>
+                            class="flex w-full justify-center rounded-md bg-green-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs transform transition duration-300 hover:scale-105 hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">Buat
+                            Akun</button>
                     </div>
                 </form>
 

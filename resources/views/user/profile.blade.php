@@ -21,14 +21,14 @@
                             <td class="border p-2">
                                 <span
                                     class="px-3 py-1 rounded-lg
-                                    {{ $l->status == '0' ? 'bg-yellow-500 text-white' : '' }}
-                                    {{ $l->status == '1' ? 'bg-green-500 text-white' : '' }}
-                                    {{ $l->status == '2' ? 'bg-red-500 text-white' : '' }}">
-                                    @if ($l->status == '0')
+                                    {{ $l->status_pelamaran == '0' ? 'bg-yellow-500 text-white' : '' }}
+                                    {{ $l->status_pelamaran == '1' ? 'bg-green-500 text-white' : '' }}
+                                    {{ $l->status_pelamaran == '2' ? 'bg-red-500 text-white' : '' }}">
+                                    @if ($l->status_pelamaran == '0')
                                         <span>Pending</span>
-                                    @elseif($l->status == '1')
+                                    @elseif($l->status_pelamaran == '1')
                                         <span>Diterima</span>
-                                    @elseif($l->status == '2')
+                                    @elseif($l->status_pelamaran == '2')
                                         <span>Ditolak</span>
                                     @endif
                                 </span>
@@ -67,23 +67,6 @@
 
     </div>
 
-    {{-- <script>
-        function showDetail(id) {
-            fetch(`/profile/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('modalPosisi').innerText = data.posisi;
-                    document.getElementById('modalTanggal').innerText = data.tanggal_melamar;
-                    document.getElementById('modalStatus').innerText = data.status;
-                    document.getElementById('modalCatatan').innerText = data.catatan || "-";
-                    document.getElementById('modalDetail').classList.remove('hidden');
-                });
-        }
-
-        function closeModal() {
-            document.getElementById('modalDetail').classList.add('hidden');
-        }
-    </script> --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {

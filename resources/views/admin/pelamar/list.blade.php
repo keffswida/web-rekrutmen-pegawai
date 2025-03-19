@@ -32,7 +32,7 @@
                         </select>
                     </div>
                     <div class="flex items-center mt-4">
-                        <label for="gelar" class="w-1/2">Gelar</label>
+                        <label for="gelar" class="w-1/2">Pendidikan</label>
                         <select name="gelar" id="filter-gelar" class="form-select">
                             <option value="-1">Semua</option>
                             <option value="0">SMA</option>

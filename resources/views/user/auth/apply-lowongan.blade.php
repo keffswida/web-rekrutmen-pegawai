@@ -1045,7 +1045,8 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Pendaftaran Berhasil!");
+                        alert(
+                            "Pendaftaran Berhasil! Anda dapat melihat status pendaftaran anda di halaman User Dashboard.");
                         window.location.href = '/career';
                     } else {
                         alert("Gagal menyimpan data!");

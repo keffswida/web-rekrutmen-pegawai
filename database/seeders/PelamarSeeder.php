@@ -13,6 +13,6 @@ class PelamarSeeder extends Seeder
      */
     public function run(): void
     {
-        Pelamar::factory()->count(10)->create();
+        Pelamar::factory()->count(9)->create();
     }
 }
